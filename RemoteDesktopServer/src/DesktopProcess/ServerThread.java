@@ -3,57 +3,76 @@ package DesktopProcess;
 import java.io.*;
 import java.net.Socket;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
+
+import DesktopUI.myinterface;
 
 public class ServerThread extends Thread {
+	private static myinterface mainframe;
 	private Socket client;
     private static Map<String, ServerThread> UserList = new HashMap<String, ServerThread>();
-    public ServerThread(Socket c) {  
+    private BufferedReader is;
+	private PrintWriter os;
+    public static void setMainframe(myinterface mainframe) {
+		ServerThread.mainframe = mainframe;
+	}
+	public ServerThread(Socket c) {  
         this.client = c;
+		try {
+			is = new BufferedReader(new InputStreamReader(client.getInputStream(), "UTF-8"));
+			os = new PrintWriter(new OutputStreamWriter(client.getOutputStream(), "UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
     public void setClient(Socket c) {
     	this.client = c;
     }
     public void run() {  
         try {  
-            BufferedReader in = new BufferedReader(new InputStreamReader(  
-                    client.getInputStream()));  
-            PrintWriter out = new PrintWriter(client.getOutputStream());  
-            
-            // Mutil User but can't parallel  
-            System.out.println(client.getInetAddress()+":"+client.getPort()+"已上线");
+            mainframe.addSession(client.getInetAddress()+":"+client.getPort()+"已上线");
             addUserList(client.getInetAddress()+":"+client.getPort(), this);
-            System.out.println("当前在线人数为：" + getUserList());
+            System.out.println("run : " + this);
+            //System.out.println("当前在线人数为：" + getUserList());
+            mainframe.addSession("当前在线人数为：" + getUserList());
             while (true) {  
-                String str = in.readLine();  
-                System.out.println(client.getInetAddress() + ":" + client.getPort() + "\n" + str);  
-                out.println("has received");  
-                out.flush();  
-                if (str.equals("end"))  
+                String str = is.readLine();  
+                //System.out.println(client.getInetAddress() + ":" + client.getPort() + "\n" + str);  
+                Information reci = new Information(str);
+                if(reci.getType().equals("session")) {
+                	mainframe.addSession("[" + client.getInetAddress() + ":" + client.getPort() + "] 对话 \n" + reci.getContent());
+                } else if(reci.getType().equals("raisehand")) {
+                	mainframe.addSession("[" + client.getInetAddress() + ":" + client.getPort() + "] 举手");
+                }
+                
+                if (str.equals("quit"))  
                     break;  
             }
-            client.close();  
+            client.close();
+            os.close();
+            is.close();
         } catch (IOException ex) {  
         } finally {  
-        	System.out.println(client.getInetAddress()+":"+client.getPort()+"已下线");
-            removeUserList(client.getInetAddress()+":"+client.getPort());
-            System.out.println("当前在线人数为：" + getUserList());
+        	//System.out.println(client.getInetAddress()+":"+client.getPort()+"已下线");
+            mainframe.addSession(client.getInetAddress()+":"+client.getPort()+"已下线");
+        	removeUserList(client.getInetAddress()+":"+client.getPort());
+            mainframe.addSession("当前在线人数为：" + getUserList());
+        	//System.out.println("当前在线人数为：" + getUserList());
         }  
     }  
-  
-//    public static void main(String[] args) throws IOException {  
-//        ServerSocket server = new ServerSocket(5678);  
-//        while (true) {  
-//            // transfer location change Single User or Multi User  
-//        	Server mc = new Server(server.accept());  
-//            mc.start();  
-//        }  
-//    }
 
 	public int getUserList() {
 		return UserList.size();
 	}
-
+	public static Iterator<Entry<String, ServerThread>> getUser() {
+		return UserList.entrySet().iterator();
+	}
 	public void addUserList(String intelAdd, ServerThread st) {
 		UserList.put(intelAdd, st);
 	}
@@ -62,9 +81,9 @@ public class ServerThread extends Thread {
 	}
 	/**
 	 * @return
-	 * 向客户端发送消息
+	 * 向客户端发送文件
 	 */
-	public boolean send(String filepath) {
+	public boolean sendFile(String filepath) {
 		File file = new File(filepath);
 		//int flen = (int)file.length();
 		 //DataInputStream dis;
@@ -105,10 +124,25 @@ public class ServerThread extends Thread {
 	}
 	/**
 	 * @return
+	 * 向客户端发送消息
+	 */
+	public boolean send(Information info) {
+		os.println(info.toString());
+		//将从系统标准输入读入的字符串输出到Server
+		os.flush(); 
+		return false;
+	}
+	/**
+	 * @return
 	 * 接收来自客户端的消息
 	 */
-	public boolean receive() {
-		
-		return false;
+	public Information receive() {
+		try {
+			return new Information(is.readLine());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		return null;
 	}
 }

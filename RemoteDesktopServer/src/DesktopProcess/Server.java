@@ -10,7 +10,7 @@ public class Server {
 	private final String HostName;
 	private int port;
 	private ServerSocket server;
-	public Server() {
+	public Server() throws IOException {
 		InetAddress ia=null;
         try {
             ia = InetAddress.getLocalHost();
@@ -21,6 +21,7 @@ public class Server {
         this.HostName = ia.getHostName();
         this.SelfAddress = ia.getHostAddress();
         port = 1234;
+        server = new ServerSocket(port);
 	}
 	public boolean openServer() {
 		try {
@@ -39,6 +40,7 @@ public class Server {
 	public void openSocket() throws IOException {
 		while(true) {
 			ServerThread conn = new ServerThread(server.accept());
+			System.out.println("Server : " + conn);
 			conn.start();
 		}
 	}

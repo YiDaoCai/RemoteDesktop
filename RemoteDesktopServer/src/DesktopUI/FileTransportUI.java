@@ -86,7 +86,7 @@ class FileFrame {
 	}
 	
 	private void confirmFile() {
-		server.send(filePathTF.getText());
+		server.sendFile(filePathTF.getText());
 		setVis(false);
 	}
 	public String getFileName() {
