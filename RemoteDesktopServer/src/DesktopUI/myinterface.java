@@ -1,42 +1,74 @@
 package DesktopUI;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.GridLayout;
-import java.awt.Image;
-import java.awt.Insets;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.IOException;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 
-import javafx.scene.layout.Border;
-
-import javax.imageio.ImageIO;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.plaf.IconUIResource;
+import javax.swing.*;
 import javax.swing.plaf.basic.BasicButtonUI;
-import javax.swing.text.IconView;
 
-import sun.awt.IconInfo;
+import DesktopProcess.Information;
+import DesktopProcess.Server;
+import DesktopProcess.ServerThread;
 
 public class myinterface extends JFrame {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	JButton setterBtn,prtScBtn,tranFileBtn,taskViewBtn,shutdown_upBtn;
-	FileFrame fileframe;
+	// NORTH
+	private JButton setterBtn,prtScBtn,tranFileBtn,taskViewBtn,shutdown_upBtn;
+	private FileFrame fileframe;
+	
+	// EAST
+	private JButton send;
+	private JPanel row1, row2, row3;
+	private JScrollPane sessionRoll, msgRoll;
+	private JTextArea session;
+	private JTextArea msg;
+	
 	public myinterface() throws Exception {
 		super("YiDaoCai远程桌面监控");
+		
+		JPanel chat = new JPanel(new BorderLayout());
+		send = new JButton("发送");
+		row1 = new JPanel();
+		row2 = new JPanel();
+		row3 = new JPanel(new GridLayout(1, 2));
+		msg = new JTextArea(5, 25);
+		msg.setTabSize(4);
+		msg.setFont(new Font("宋体", Font.BOLD, 16));
+		msg.setLineWrap(true);
+		msg.setWrapStyleWord(true);
+		
+		session = new JTextArea(20, 25);
+		session.setLineWrap(true);
+		session.setWrapStyleWord(true);
+		session.setFont(new Font("宋体", Font.BOLD, 16));
+		session.append("欢迎来到聊天室\n");
+		session.setEditable(false);
+		sessionRoll = new JScrollPane(session);
+		msgRoll = new JScrollPane(msg);
+		
+		chat.setSize(250, 560);
+		//Container con = chat.getContentPane();
+		//con.setLayout(new BorderLayout());
+		row1.add(sessionRoll);
+		row2.add(msgRoll);
+		row3.add(send);
+		chat.add(row1, BorderLayout.NORTH);
+		chat.add(row2, BorderLayout.CENTER);
+		chat.add(row3, BorderLayout.SOUTH);
+		
+		send.addActionListener(new Action());
+		
+		//chat.setResizable(false);
+		//chat.setLocation(1050, 200);
+		//chat.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		//chat.setVisible(true);
+		
 		//fileframe = new FileFrame();
 		//setterBtn=new JButton("设置");
 		setterBtn = createBtn("设置", "./image/set.png");
@@ -73,6 +105,7 @@ public class myinterface extends JFrame {
 		p.add(shutdown_upBtn);
 		
 		cp.add(p, BorderLayout.NORTH);
+		cp.add(chat, BorderLayout.EAST);
 	}
 	
 	public class Action implements ActionListener {
@@ -82,6 +115,15 @@ public class myinterface extends JFrame {
 			// TODO Auto-generated method stub
 			if(e.getSource() == tranFileBtn) {
 				fileframe.setVis(true);
+			} else if(e.getSource() == send) {
+				Iterator<Entry<String, ServerThread>> iter = ServerThread.getUser();
+				while(iter.hasNext()) {
+					Map.Entry<String, ServerThread> val = iter.next();
+					System.out.println("interface : " + val);
+					val.getValue().send(Information.createSession("Server", msg.getText()));
+				}
+				addSession("[Server]" + msg.getText());
+				msg.setText(null);
 			}
 		}
 		
@@ -95,6 +137,8 @@ public class myinterface extends JFrame {
 		frame.setVisible(true);
 		frame.setBackground(Color.yellow);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		ServerThread.setMainframe(frame);
+		new Server().openSocket();
 	}
 	
 	private JButton createBtn(String text, String icon) {
@@ -109,5 +153,8 @@ public class myinterface extends JFrame {
 		btn.setMargin(new Insets(0, 0, 0, 0));// 按钮内容与边框距离
 		//btn.addMouseListener(new MyMouseListener(this));
 		return btn;
+	}
+	public void addSession(String content) {
+		session.append(content + "\n");
 	}
 }
