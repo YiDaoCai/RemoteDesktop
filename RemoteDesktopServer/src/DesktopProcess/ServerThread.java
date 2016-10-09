@@ -7,15 +7,15 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import DesktopUI.myinterface;
+import DesktopUI.ServerMainFrame;
 
 public class ServerThread extends Thread {
-	private static myinterface mainframe;
+	private static ServerMainFrame mainframe;
 	private Socket client;
     private static Map<String, ServerThread> UserList = new HashMap<String, ServerThread>();
     private BufferedReader is;
 	private PrintWriter os;
-    public static void setMainframe(myinterface mainframe) {
+    public static void setMainframe(ServerMainFrame mainframe) {
 		ServerThread.mainframe = mainframe;
 	}
 	public ServerThread(Socket c) {  

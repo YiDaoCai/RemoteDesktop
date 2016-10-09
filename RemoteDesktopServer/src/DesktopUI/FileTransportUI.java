@@ -14,7 +14,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import com.sun.org.apache.xerces.internal.dom.PSVIDOMImplementationImpl;
 
 import DesktopProcess.ServerThread;
 
