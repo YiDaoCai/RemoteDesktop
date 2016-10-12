@@ -20,7 +20,7 @@ public class OutputPhoto extends Thread {
 
 	public OutputPhoto() {
 		screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		rectangle = new Rectangle(screenSize);// ¿ÉÒÔÖ¸¶¨²¶»ñÆÁÄ»ÇøÓò
+		rectangle = new Rectangle(screenSize);// å¯ä»¥æŒ‡å®šæ•è·å±å¹•åŒºåŸŸ
 		try {
 			robot = new Robot();
 		} catch (Exception e) {
@@ -35,28 +35,28 @@ public class OutputPhoto extends Thread {
 		
 		
 		while (true) {
-			System.out.println("³¢ÊÔºÍ·şÎñÆ÷½¨Á¢Á¬½Ó");
+			System.out.println("å°è¯•å’ŒæœåŠ¡å™¨å»ºç«‹è¿æ¥");
 			try {
-				socket = new Socket("172.22.15.79", 8888);// Á¬½ÓÔ¶³ÌIP
-				System.out.println("½¨Á¢Á¬½Ó³É¹¦");
+				socket = new Socket("172.00.00.1", 8888);// è¿æ¥è¿œç¨‹IP
+				System.out.println("å»ºç«‹è¿æ¥æˆåŠŸ");
 			} catch (UnknownHostException e) {
-	            System.out.println("Á¬½ÓÊ§°Ü£¬ÓòÃû´íÎó");
+	            System.out.println("è¿æ¥å¤±è´¥ï¼ŒåŸŸåé”™è¯¯");
 	        } catch(IOException e) {
-	            System.out.println("Á¬½ÓÊ§°Ü£¬·¢Éú²Ù×÷Ì×½Ó×ÖÒì³£");
+	            System.out.println("è¿æ¥å¤±è´¥ï¼Œå‘ç”Ÿæ“ä½œå¥—æ¥å­—å¼‚å¸¸");
 	        } catch (Exception e) {
 				e.printStackTrace();
 	        }
 			
-			BufferedImage image = robot.createScreenCapture(rectangle);// ²¶»ñÖÆ¶¨ÆÁÄ»¾ØĞÎÇøÓò
+			BufferedImage image = robot.createScreenCapture(rectangle);// æ•è·åˆ¶å®šå±å¹•çŸ©å½¢åŒºåŸŸ
 
 			try {
-				os = new ZipOutputStream(socket.getOutputStream());// ¼ÓÈëÑ¹ËõÁ÷
+				os = new ZipOutputStream(socket.getOutputStream());// åŠ å…¥å‹ç¼©æµ
 				// os = new ZipOutputStream(new FileOutputStream("C:/1.zip"));
 				os.putNextEntry(new ZipEntry("test.jpg"));
 				os.setLevel(9);
-				JPEGCodec.createJPEGEncoder(os).encode(image);// Í¼Ïñ±àÂë³ÉJPEG
+				JPEGCodec.createJPEGEncoder(os).encode(image);// å›¾åƒç¼–ç æˆJPEG
 				os.close();
-				Thread.sleep(50);// Ã¿Ãë20Ö¡
+				Thread.sleep(50);// æ¯ç§’20å¸§
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
