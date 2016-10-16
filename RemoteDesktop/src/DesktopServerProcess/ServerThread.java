@@ -1,6 +1,7 @@
 package DesktopServerProcess;
 
 import java.io.*;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -13,7 +14,7 @@ import util.Information;
 import DesktopServerUI.ServerMainFrame;
 
 public class ServerThread extends ServerSocketHandler {
-    private static Map<String, ServerThread> UserList = new HashMap<String, ServerThread>();
+    private static Map<InetAddress, ServerThread> UserList = new HashMap<InetAddress, ServerThread>();
     //private BufferedReader is;
 	public ServerThread(Socket c) throws IOException {  
         super(c);
@@ -28,14 +29,14 @@ public class ServerThread extends ServerSocketHandler {
 	public static int getUserList() {
 		return UserList.size();
 	}
-	public static Iterator<Entry<String, ServerThread>> getUser() {
+	public static Iterator<Entry<InetAddress, ServerThread>> getUser() {
 		return UserList.entrySet().iterator();
 	}
-	public static void addUserList(String intelAdd, ServerThread st) {
+	public static void addUserList(InetAddress intelAdd, ServerThread st) {
 		UserList.put(intelAdd, st);
 	}
-	public static void removeUserList(String intelAdd) {
-		UserList.remove(intelAdd);
+	public static void removeUserList(InetAddress inetAddress) {
+		UserList.remove(inetAddress);
 	}
 	/**
 	 * @return

@@ -61,7 +61,8 @@ public class ClientDialogUI {
 		
 		chat.setResizable(false);
 		chat.setLocation(1050, 200);
-		chat.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		//chat.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
 		chat.setVisible(true);
 		
 	}

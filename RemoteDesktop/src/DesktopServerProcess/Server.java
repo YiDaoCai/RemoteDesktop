@@ -26,22 +26,34 @@ public class Server {
         this.SelfAddress = ia.getHostAddress();
         port = type.getPort();
         server = new ServerSocket(port, 30);
-        openSocket();
+        new Thread(new openSocket()).start();
 	}
 	/**
 	 * @return
 	 * 打开Socket通信
 	 * @throws IOException 
 	 */
-	public void openSocket() throws IOException {
-		while(true) {
-			ServerThread conn = new ServerThread(server.accept());
-			ServerThread.addUserList(conn.getSocket().getInetAddress().toString() + ":" + conn.getSocket().getPort(), conn);
-			conn.listen(true);
-			System.out.println("Server : " + conn);
-			//conn.start();s
+	public class openSocket implements Runnable {
+		
+		@Override
+		public void run() {
+			while(true) {
+				ServerThread conn;
+				try {
+					conn = new ServerThread(server.accept());
+					ServerThread.addUserList(conn.getSocket().getInetAddress(), conn);
+					conn.listen(true);
+					System.out.println("Server : " + conn);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				//conn.start();s
+			}
 		}
 	}
+		
 	public String getHostName() {
 		return HostName;
 	}
@@ -53,5 +65,6 @@ public class Server {
 	{
 		ServerMainFrame.getFrame();
 		new Server(DesktopRemoteType.OtherType);
+		new ServerShot().start();
 	}
 }

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.Iterator;
@@ -138,7 +139,7 @@ public class ServerSocketHandler implements SocketStatusListener {
 			while (listening) {
 				String readStr = null;
 				try {
-					mainframe.addSession(socket.getInetAddress()+":"+socket.getPort()+"已上线");
+					mainframe.addSession("[" + socket.getInetAddress() + "] 已上线");
 		            mainframe.setOnlineMember("当前在线人数为：" + ServerThread.getUserList());
 		            //System.out.println("当前在线人数为：" + ServerThread.getUserList());
 					while ((readStr = bufferedReader.readLine()) != null) {
@@ -146,18 +147,18 @@ public class ServerSocketHandler implements SocketStatusListener {
 						Information reci = new Information(readStr);
 						
 						if(reci.getType().equals("session")) {
-		                	mainframe.addSession("[" + socket.getInetAddress() + ":" + socket.getPort() + "] 对话 \n" + reci.getContent());
+		                	mainframe.addSession("[" + socket.getInetAddress() + "] 对话 \n" + reci.getContent());
 		                	
-		                	Iterator<Entry<String, ServerThread>> iter = ServerThread.getUser();
+		                	Iterator<Entry<InetAddress, ServerThread>> iter = ServerThread.getUser();
 		    				while(iter.hasNext()) {
-		    					Map.Entry<String, ServerThread> val = iter.next();
-		    					if(!val.getKey().equals(socket.getInetAddress() + ":" + socket.getPort()))
+		    					Map.Entry<InetAddress, ServerThread> val = iter.next();
+		    					if(!val.getKey().equals(socket.getInetAddress()))
 		    						val.getValue().sendMessage(reci);
 		    				}
 		                	
 		                } else if(reci.getType().equals("raisehand")) {
-		                	mainframe.addSession("[" + socket.getInetAddress() + ":" + socket.getPort() + "] 举手");
-		                	mainframe.showRaiseHand("[" + socket.getInetAddress() + ":" + socket.getPort() + "] 举手");
+		                	mainframe.addSession("[" + socket.getInetAddress() + "] 举手");
+		                	mainframe.showRaiseHand("[" + socket.getInetAddress() + "] 举手");
 		                }
 					}
 					//System.out.println(4);
@@ -172,8 +173,8 @@ public class ServerSocketHandler implements SocketStatusListener {
 					return;// 终止线程继续运行,这里也可以使用continue
 				} finally {
 					//System.out.println(socket.getInetAddress()+":"+socket.getPort()+"已下线");
-					mainframe.addSession(socket.getInetAddress()+":"+socket.getPort()+"已下线");
-					ServerThread.removeUserList(socket.getInetAddress().toString()+":"+socket.getPort());
+					mainframe.addSession("[" + socket.getInetAddress() + "] 已下线");
+					ServerThread.removeUserList(socket.getInetAddress());
 					mainframe.setOnlineMember("当前在线人数为：" + ServerThread.getUserList());
 					 
 				}
