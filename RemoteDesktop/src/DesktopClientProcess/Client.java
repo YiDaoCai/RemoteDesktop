@@ -6,19 +6,21 @@ import java.net.*;
 
 import util.DesktopRemoteType;
 import util.Information;
+import util.XMLUtil;
 
 public class Client {
 	private final String SelfAddress;
 	private final String HostName;
-	private String ServerAddress;
+	private static String ServerAddress;
 	private int port;
 	private Socket socket;
+	
 	public Socket getSocket() {
 		return socket;
 	}
 	private ClientSocketHandler handler;
 	public Client(DesktopRemoteType type) throws IOException {
-		this.ServerAddress = "127.0.0.1";
+		//Client.ServerAddress = XMLUtil.getBean("server");
 		this.port = type.getPort();
 		InetAddress ia=null;
         try {
@@ -32,26 +34,38 @@ public class Client {
         openSocket();
         handler = new ClientSocketHandler(this);
         handler.listen(true);
+        new ClientShot().start();
+        System.out.println("shot start...");
 	}
 	/**
 	 * @return
 	 * 打开Socket通信
 	 */
-	public boolean openSocket() {
-		try {
-			socket = new Socket(this.ServerAddress, this.port);
-			socket.setKeepAlive(true);
-			socket.setTcpNoDelay(true);
-		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return false;
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return false;
+	public void openSocket() {
+		boolean ok = false;
+		String ip = null;
+		if(!XMLUtil.exist()) {
+			ip = javax.swing.JOptionPane.showInputDialog(null, " 输入服务器地址");
+			XMLUtil.createXML(ip);
 		}
-		return true;
+		while(!ok) {
+			try {
+				Client.ServerAddress = XMLUtil.getBean("server");
+				socket = new Socket(Client.ServerAddress, this.port);
+				socket.setKeepAlive(true);
+				socket.setTcpNoDelay(true);
+				ok = true;
+			} catch (UnknownHostException e) {
+				ip = javax.swing.JOptionPane.showInputDialog(null, "服务器地址有误，请重新输入服务器地址");
+				XMLUtil.createXML(ip);
+			} catch (ConnectException ex){
+				ip = javax.swing.JOptionPane.showInputDialog(null, "连接服务器超时，请重新输入服务器地址");
+				XMLUtil.createXML(ip);
+			} catch (Exception e) {
+				ip = javax.swing.JOptionPane.showInputDialog(null, "连接服务器失败，请重新输入服务器地址");
+				XMLUtil.createXML(ip);
+			}
+		}
 	}
 	/**
 	 * @return
@@ -140,7 +154,7 @@ public class Client {
 		return HostName + ":" + SelfAddress;
 	}
 	public Client(String ServerAddress, int port) {
-		this.ServerAddress = ServerAddress;
+		Client.ServerAddress = ServerAddress;
 		this.port = port;
 		InetAddress ia=null;
         try {
@@ -152,7 +166,7 @@ public class Client {
         this.HostName = ia.getHostName();
         this.SelfAddress = ia.getHostAddress();
 	}
-	public String getServerAddress() {
+	public static String getServerAddress() {
 		return ServerAddress;
 	}
 	public void setServerAddress(String serverAddress) {
@@ -165,9 +179,7 @@ public class Client {
 		return port;
 	}
 	public static void main(String args[]) throws IOException {
-		//new WnetWScreenRecordPlayer();
-		//Client test = 
-		//test.openSocket();
+		//String ip = javax.swing.JOptionPane.showInputDialog(null, "服务器地址有误，请重新输入服务器地址");
 		new Client(DesktopRemoteType.OtherType);
 	}
 	

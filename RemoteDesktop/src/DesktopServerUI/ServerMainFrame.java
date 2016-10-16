@@ -2,6 +2,7 @@ package DesktopServerUI;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.InetAddress;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -13,13 +14,14 @@ import util.DesktopRemoteType;
 import util.Information;
 
 import DesktopServerProcess.Server;
+import DesktopServerProcess.ServerShot;
 import DesktopServerProcess.ServerThread;
 
 public class ServerMainFrame extends JFrame {
 	/**
 	 * 
 	 */
-	private static final int total = 18;
+	private static final int total = 30;
 	private static final long serialVersionUID = 1L;
 	private static ServerMainFrame servermainframe;
 	
@@ -44,11 +46,11 @@ public class ServerMainFrame extends JFrame {
 	
 	// OTHER
 	private FileFrame singleTranFileFrame ;
-	public static JButton[] jp = new JButton[total];
+	public static JButton[] user = new JButton[total];
 	
 	protected DesktopServerRaiseHandFrame raisehandframe;
 	private ServerMainFrame() {
-		super("YiDaoCaiè¿œç¨‹æ¡Œé¢ç›‘æ§");
+		super("YiDaoCaiÔ¶³Ì×ÀÃæ¼à¿Ø");
 		
 		setSingleTranFileFrame(new FileFrame(null));
 		raisehandframe = DesktopServerRaiseHandFrame.getFrame();
@@ -56,23 +58,23 @@ public class ServerMainFrame extends JFrame {
 		
 		
 		JPanel chat = new JPanel(new BorderLayout());
-		send = new JButton("å‘é€");
+		send = new JButton("·¢ËÍ");
 		row1 = new JPanel(new BorderLayout());
 		row2 = new JPanel(new BorderLayout());
 		//row3 = new JPanel(new GridLayout(1, 2));
 		
-		onlineMember = new JLabel("å½“å‰åœ¨çº¿äººæ•°ï¼š0");
+		onlineMember = new JLabel("µ±Ç°ÔÚÏßÈËÊı£º0");
 		msg = new JTextArea(5, 25);
 		msg.setTabSize(4);
-		msg.setFont(new Font("å®‹ä½“", Font.BOLD, 16));
+		msg.setFont(new Font("ËÎÌå", Font.BOLD, 16));
 		msg.setLineWrap(true);
 		msg.setWrapStyleWord(true);
 		
 		session = new JTextArea(20, 25);
 		session.setLineWrap(true);
 		session.setWrapStyleWord(true);
-		session.setFont(new Font("å®‹ä½“", Font.BOLD, 16));
-		session.append("æ¬¢è¿è¿›å…¥èŠå¤©å®¤\r\n");
+		session.setFont(new Font("ËÎÌå", Font.BOLD, 16));
+		session.append("»¶Ó­½øÈëÁÄÌìÊÒ\r\n");
 		session.setEditable(false);
 		sessionRoll = new JScrollPane(session);
 		msgRoll = new JScrollPane(msg);
@@ -89,20 +91,26 @@ public class ServerMainFrame extends JFrame {
 		
 		send.addActionListener(new Action());
 		onlineUserList = new JPanel();
-		onlineUserList.setLayout(new GridLayout((total-1)/3 + 1,3));//new GridLayout(18, 3)
+		onlineUserList.setLayout(new GridLayout(10,3));//new GridLayout(18, 3)
 		for(int i = 0; i < total;i++){
-			jp[i] = new JButton();
-			jp[i].setPreferredSize(new Dimension(200, 150));
-			onlineUserList.add(jp[i]);
-			//å†™ä¸ªåŒå‡»æ”¾å¤§çš„
+			user[i]  = new JButton();
+			user[i].setPreferredSize(new Dimension(200, 150));
+			user[i].setVisible(false);
+			user[i].setUI(new BasicButtonUI());
+			user[i].setContentAreaFilled(false);
+			user[i].setMargin(new Insets(0, 0, 0, 0));
+			user[i].addActionListener(new Enlarge());
+			onlineUserList.add(user[i]);
+			
+			//Ğ´¸öË«»÷·Å´óµÄ
 		}
 		userRoll = new JScrollPane(onlineUserList);
 		
-		setterBtn = createBtn("è®¾ ç½®", "./image/set.png");
-		prtScBtn = createBtn("ç›‘ æ§", "./image/prtSc.png");
-		tranFileBtn = createBtn("ä¼ è¾“æ–‡ä»¶", "./image/tranFile.png");
-		taskViewBtn = createBtn("è¿›ç¨‹ç›‘æ§", "./image/taskView.png");
-		shutdown_upBtn = createBtn("å¼€å…³æœº", "./image/shutdown_up.png");
+		setterBtn = createBtn("Éè ÖÃ", "./image/set.png");
+		prtScBtn = createBtn("¼à ¿Ø", "./image/prtSc.png");
+		tranFileBtn = createBtn("´«ÊäÎÄ¼ş", "./image/tranFile.png");
+		taskViewBtn = createBtn("½ø³Ì¼à¿Ø", "./image/taskView.png");
+		shutdown_upBtn = createBtn("¿ª¹Ø»ú", "./image/shutdown_up.png");
 		Container cp = getContentPane();
 		cp.setLayout(new BorderLayout());
 		
@@ -128,10 +136,11 @@ public class ServerMainFrame extends JFrame {
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	
-	public void addBtn() {
-		JButton jb = new JButton();
-		jb.setPreferredSize(new Dimension(200,150));
-		onlineUserList.add(jb);
+	public static JButton addBtn() {
+		JButton jb = user[ServerShot.getTotal()];
+		jb.setVisible(true);
+		//servermainframe.onlineUserList.add(jb);
+		return jb;
 	}
 	
 	public class Action implements ActionListener {
@@ -142,9 +151,9 @@ public class ServerMainFrame extends JFrame {
 			if(e.getSource() == tranFileBtn) {
 				singleTranFileFrame.setVis(true);
 			} else if(e.getSource() == send) {
-				Iterator<Entry<String, ServerThread>> iter = ServerThread.getUser();
+				Iterator<Entry<InetAddress, ServerThread>> iter = ServerThread.getUser();
 				while(iter.hasNext()) {
-					Map.Entry<String, ServerThread> val = iter.next();
+					Map.Entry<InetAddress, ServerThread> val = iter.next();
 					System.out.println("interface : " + val);
 					val.getValue().sendMessage(Information.createSession("Server", msg.getText()));
 				}
@@ -152,6 +161,19 @@ public class ServerMainFrame extends JFrame {
 				msg.setText(null);
 			}
 		}
+		
+	}
+	private class Enlarge implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// TODO Auto-generated method stub
+			watchFrame.getFrame().setVisible(true);
+			watchFrame.getFrame().setTitle(watchFrame.getAddress(e.getSource()).toString());
+			watchFrame.setStatu(true);
+			watchFrame.setInetAddress(watchFrame.getAddress(e.getSource()));
+		}
+		
 		
 	}
 	public void setOnlineMember(String value) {
@@ -163,10 +185,11 @@ public class ServerMainFrame extends JFrame {
 		Image image = ii.getImage(); 
 		Image smallImage = image.getScaledInstance(64,64,Image.SCALE_FAST);
 		JButton btn = new JButton(text, new ImageIcon(smallImage));
+		
 		btn.setUI(new BasicButtonUI());
 		btn.setPreferredSize(new Dimension(64, 64));
 		btn.setContentAreaFilled(false);
-		btn.setFont(new Font("å®‹ä½“", Font.PLAIN, 15));
+		btn.setFont(new Font("ËÎÌå", Font.PLAIN, 15));
 		btn.setMargin(new Insets(0, 0, 0, 0));
 		btn.addActionListener(new Action());
 		//btn.addMouseListener(new MyMouseListener(this));
