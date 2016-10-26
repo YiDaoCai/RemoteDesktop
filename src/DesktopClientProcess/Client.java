@@ -39,13 +39,13 @@ public class Client {
 	}
 	/**
 	 * @return
-	 * ´ò¿ªSocketÍ¨ĞÅ
+	 * æ‰“å¼€Socketé€šä¿¡
 	 */
 	public void openSocket() {
 		boolean ok = false;
 		String ip = null;
 		if(!XMLUtil.exist()) {
-			ip = javax.swing.JOptionPane.showInputDialog(null, " ÊäÈë·şÎñÆ÷µØÖ·");
+			ip = javax.swing.JOptionPane.showInputDialog(null, " è¾“å…¥æœåŠ¡å™¨åœ°å€");
 			XMLUtil.createXML(ip);
 		}
 		while(!ok) {
@@ -56,20 +56,20 @@ public class Client {
 				socket.setTcpNoDelay(true);
 				ok = true;
 			} catch (UnknownHostException e) {
-				ip = javax.swing.JOptionPane.showInputDialog(null, "·şÎñÆ÷µØÖ·ÓĞÎó£¬ÇëÖØĞÂÊäÈë·şÎñÆ÷µØÖ·");
+				ip = javax.swing.JOptionPane.showInputDialog(null, "æœåŠ¡å™¨åœ°å€æœ‰è¯¯ï¼Œè¯·é‡æ–°è¾“å…¥æœåŠ¡å™¨åœ°å€");
 				XMLUtil.createXML(ip);
 			} catch (ConnectException ex){
-				ip = javax.swing.JOptionPane.showInputDialog(null, "Á¬½Ó·şÎñÆ÷³¬Ê±£¬ÇëÖØĞÂÊäÈë·şÎñÆ÷µØÖ·");
+				ip = javax.swing.JOptionPane.showInputDialog(null, "è¿æ¥æœåŠ¡å™¨è¶…æ—¶ï¼Œè¯·é‡æ–°è¾“å…¥æœåŠ¡å™¨åœ°å€");
 				XMLUtil.createXML(ip);
 			} catch (Exception e) {
-				ip = javax.swing.JOptionPane.showInputDialog(null, "Á¬½Ó·şÎñÆ÷Ê§°Ü£¬ÇëÖØĞÂÊäÈë·şÎñÆ÷µØÖ·");
+				ip = javax.swing.JOptionPane.showInputDialog(null, "è¿æ¥æœåŠ¡å™¨å¤±è´¥ï¼Œè¯·é‡æ–°è¾“å…¥æœåŠ¡å™¨åœ°å€");
 				XMLUtil.createXML(ip);
 			}
 		}
 	}
 	/**
 	 * @return
-	 * ¹Ø±ÕSocketÍ¨ĞÅ
+	 * å…³é—­Socketé€šä¿¡
 	 */
 	public boolean closeSocket() {
 		try {
@@ -83,21 +83,21 @@ public class Client {
 	}
 	/**
 	 * @return
-	 * Ïò·şÎñ¶Ë·¢ËÍÏûÏ¢
+	 * å‘æœåŠ¡ç«¯å‘é€æ¶ˆæ¯
 	 */
 	public void send(Information info) {
 		handler.sendMessage(info.toString());
 	}
 	/**
 	 * @return
-	 * ½ÓÊÕ·şÎñ¶ËµÄÏûÏ¢
+	 * æ¥æ”¶æœåŠ¡ç«¯çš„æ¶ˆæ¯
 	 */
 	public Information receive() {
 		return null;
 	}
 	/**
 	 * @return
-	 * ½ÓÊÕÀ´×Ô·şÎñ¶ËµÄÎÄ¼ş
+	 * æ¥æ”¶æ¥è‡ªæœåŠ¡ç«¯çš„æ–‡ä»¶
 	 */
 	public boolean receiveFile() {
 		if(socket == null) return false;
@@ -119,8 +119,8 @@ public class Client {
 			savePath += inputStream.readUTF();
 			DataOutputStream fileOut = new DataOutputStream(new BufferedOutputStream(new BufferedOutputStream(new FileOutputStream(savePath))));
 			len = inputStream.readLong();
-			System.out.println("ÎÄ¼şµÄ³¤¶ÈÎª:" + len + "\n");
-			System.out.println("¿ªÊ¼½ÓÊÕÎÄ¼ş!" + "\n");
+			System.out.println("æ–‡ä»¶çš„é•¿åº¦ä¸º:" + len + "\n");
+			System.out.println("å¼€å§‹æ¥æ”¶æ–‡ä»¶!" + "\n");
 			while (true) {
                 int read = 0;
                 if (inputStream != null) {
@@ -130,11 +130,11 @@ public class Client {
                 if (read <= 0) {
                     break;
                 }
-                //ÏÂÃæ½ø¶ÈÌõ±¾ÎªÍ¼ĞÎ½çÃæµÄprograssBar×öµÄ£¬ÕâÀïÈç¹ûÊÇ´òÎÄ¼ş£¬¿ÉÄÜ»áÖØ¸´´òÓ¡³öÒ»Ğ©ÏàÍ¬µÄ°Ù·Ö±È
-                System.out.println("ÎÄ¼ş½ÓÊÕÁË" +  (passedlen * 100/ len) + "%\n");
+                //ä¸‹é¢è¿›åº¦æ¡æœ¬ä¸ºå›¾å½¢ç•Œé¢çš„prograssBaråšçš„ï¼Œè¿™é‡Œå¦‚æœæ˜¯æ‰“æ–‡ä»¶ï¼Œå¯èƒ½ä¼šé‡å¤æ‰“å°å‡ºä¸€äº›ç›¸åŒçš„ç™¾åˆ†æ¯”
+                System.out.println("æ–‡ä»¶æ¥æ”¶äº†" +  (passedlen * 100/ len) + "%\n");
                 fileOut.write(buf, 0, read);
             }
-            System.out.println("½ÓÊÕÍê³É£¬ÎÄ¼ş´æÎª" + savePath + "\n");
+            System.out.println("æ¥æ”¶å®Œæˆï¼Œæ–‡ä»¶å­˜ä¸º" + savePath + "\n");
             fileOut.close();
             inputStream.close();
             getMessageStream.close();
@@ -179,7 +179,7 @@ public class Client {
 		return port;
 	}
 	public static void main(String args[]) throws IOException {
-		//String ip = javax.swing.JOptionPane.showInputDialog(null, "·şÎñÆ÷µØÖ·ÓĞÎó£¬ÇëÖØĞÂÊäÈë·şÎñÆ÷µØÖ·");
+		//String ip = javax.swing.JOptionPane.showInputDialog(null, "æœåŠ¡å™¨åœ°å€æœ‰è¯¯ï¼Œè¯·é‡æ–°è¾“å…¥æœåŠ¡å™¨åœ°å€");
 		new Client(DesktopRemoteType.OtherType);
 	}
 	

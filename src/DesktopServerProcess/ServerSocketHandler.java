@@ -15,6 +15,7 @@ import java.util.Map.Entry;
 import com.io.sockets.SocketStatusListener;
 
 import DesktopServerUI.ServerMainFrame;
+import DesktopServerUI.taskViewFrame;
 
 import util.Information;
 
@@ -42,8 +43,8 @@ public class ServerSocketHandler implements SocketStatusListener {
 	}
 
 	/**
-	 * sendMessage:(ÕâÀïÓÃÒ»¾ä»°ÃèÊöÕâ¸ö·½·¨µÄ×÷ÓÃ). <br/>
-	 * TODO(ÕâÀïÃèÊöÕâ¸ö·½·¨ÊÊÓÃÌõ¼ş ¨C ¿ÉÑ¡).<br/>
+	 * sendMessage:(è¿™é‡Œç”¨ä¸€å¥è¯æè¿°è¿™ä¸ªæ–¹æ³•çš„ä½œç”¨). <br/>
+	 * TODO(è¿™é‡Œæè¿°è¿™ä¸ªæ–¹æ³•é€‚ç”¨æ¡ä»¶ â€“ å¯é€‰).<br/>
 	 */
 	public void sendMessage(String msg) {
 		writer.send(msg);
@@ -67,7 +68,7 @@ public class ServerSocketHandler implements SocketStatusListener {
 			} finally {
 				reader = null;
 				writer = null;
-				System.out.println("SocketÁ¬½ÓÒÑ¹Ø±Õ£¡£¡");
+				System.out.println("Socketè¿æ¥å·²å…³é—­ï¼ï¼");
 			}
 		}
 
@@ -91,7 +92,7 @@ public class ServerSocketHandler implements SocketStatusListener {
 
 	/**
 	 * @author Administrator
-	 * ¶Á²Ù×÷½ø³Ì
+	 * è¯»æ“ä½œè¿›ç¨‹
 	 */
 	public class ReaderTask extends Thread {
 
@@ -111,8 +112,8 @@ public class ServerSocketHandler implements SocketStatusListener {
 		}
 
 		/**
-		 * finish:(ÕâÀïÓÃÒ»¾ä»°ÃèÊöÕâ¸ö·½·¨µÄ×÷ÓÃ). <br/>
-		 * TODO(ÕâÀïÃèÊöÕâ¸ö·½·¨ÊÊÓÃÌõ¼ş ¨C ¿ÉÑ¡).<br/>
+		 * finish:(è¿™é‡Œç”¨ä¸€å¥è¯æè¿°è¿™ä¸ªæ–¹æ³•çš„ä½œç”¨). <br/>
+		 * TODO(è¿™é‡Œæè¿°è¿™ä¸ªæ–¹æ³•é€‚ç”¨æ¡ä»¶ â€“ å¯é€‰).<br/>
 		 * 
 		 * @throws IOException
 		 * 
@@ -139,15 +140,15 @@ public class ServerSocketHandler implements SocketStatusListener {
 			while (listening) {
 				String readStr = null;
 				try {
-					mainframe.addSession("[" + socket.getInetAddress() + "] ÒÑÉÏÏß");
-		            mainframe.setOnlineMember("µ±Ç°ÔÚÏßÈËÊıÎª£º" + ServerThread.getUserList());
-		            //System.out.println("µ±Ç°ÔÚÏßÈËÊıÎª£º" + ServerThread.getUserList());
+					mainframe.addSession("[" + socket.getInetAddress() + "] å·²ä¸Šçº¿");
+		            mainframe.setOnlineMember("å½“å‰åœ¨çº¿äººæ•°ä¸ºï¼š" + ServerThread.getUserList());
+		            //System.out.println("å½“å‰åœ¨çº¿äººæ•°ä¸ºï¼š" + ServerThread.getUserList());
 					while ((readStr = bufferedReader.readLine()) != null) {
 						// System.err.println("[Server]:"+readStr);
 						Information reci = new Information(readStr);
 						
 						if(reci.getType().equals("session")) {
-		                	mainframe.addSession("[" + socket.getInetAddress() + "] ¶Ô»° \n" + reci.getContent());
+		                	mainframe.addSession("[" + socket.getInetAddress() + "] å¯¹è¯ \n" + reci.getContent());
 		                	
 		                	Iterator<Entry<InetAddress, ServerThread>> iter = ServerThread.getUser();
 		    				while(iter.hasNext()) {
@@ -157,8 +158,11 @@ public class ServerSocketHandler implements SocketStatusListener {
 		    				}
 		                	
 		                } else if(reci.getType().equals("raisehand")) {
-		                	mainframe.addSession("[" + socket.getInetAddress() + "] ¾ÙÊÖ");
-		                	mainframe.showRaiseHand("[" + socket.getInetAddress() + "] ¾ÙÊÖ");
+		                	mainframe.addSession("[" + socket.getInetAddress() + "] ä¸¾æ‰‹");
+		                	mainframe.showRaiseHand("[" + socket.getInetAddress() + "] ä¸¾æ‰‹");
+		                } else if(reci.getType().equals("tasklist")) {
+		                	taskViewFrame.getFrame().view(reci);
+		                	System.out.println(reci);
 		                }
 					}
 					//System.out.println(4);
@@ -170,12 +174,12 @@ public class ServerSocketHandler implements SocketStatusListener {
 								status, e);
 					}
 					e.printStackTrace();
-					return;// ÖÕÖ¹Ïß³Ì¼ÌĞøÔËĞĞ,ÕâÀïÒ²¿ÉÒÔÊ¹ÓÃcontinue
+					return;// ç»ˆæ­¢çº¿ç¨‹ç»§ç»­è¿è¡Œ,è¿™é‡Œä¹Ÿå¯ä»¥ä½¿ç”¨continue
 				} finally {
-					//System.out.println(socket.getInetAddress()+":"+socket.getPort()+"ÒÑÏÂÏß");
-					mainframe.addSession("[" + socket.getInetAddress() + "] ÒÑÏÂÏß");
+					//System.out.println(socket.getInetAddress()+":"+socket.getPort()+"å·²ä¸‹çº¿");
+					mainframe.addSession("[" + socket.getInetAddress() + "] å·²ä¸‹çº¿");
 					ServerThread.removeUserList(socket.getInetAddress());
-					mainframe.setOnlineMember("µ±Ç°ÔÚÏßÈËÊıÎª£º" + ServerThread.getUserList());
+					mainframe.setOnlineMember("å½“å‰åœ¨çº¿äººæ•°ä¸ºï¼š" + ServerThread.getUserList());
 					 
 				}
 
@@ -198,8 +202,8 @@ public class ServerSocketHandler implements SocketStatusListener {
 		}
 
 		/**
-		 * listen:(ÕâÀïÓÃÒ»¾ä»°ÃèÊöÕâ¸ö·½·¨µÄ×÷ÓÃ). <br/>
-		 * TODO(ÕâÀïÃèÊöÕâ¸ö·½·¨ÊÊÓÃÌõ¼ş ¨C ¿ÉÑ¡).<br/>
+		 * listen:(è¿™é‡Œç”¨ä¸€å¥è¯æè¿°è¿™ä¸ªæ–¹æ³•çš„ä½œç”¨). <br/>
+		 * TODO(è¿™é‡Œæè¿°è¿™ä¸ªæ–¹æ³•é€‚ç”¨æ¡ä»¶ â€“ å¯é€‰).<br/>
 		 * 
 		 */
 		public void startListener(SocketStatusListener ssl) {
@@ -213,7 +217,7 @@ public class ServerSocketHandler implements SocketStatusListener {
 	
 	/**
 	 * @author Administrator
-	 * Ğ´²Ù×÷½ø³Ì
+	 * å†™æ“ä½œè¿›ç¨‹
 	 */
 	public  class WriterTask extends Thread{
 
@@ -229,8 +233,8 @@ public class ServerSocketHandler implements SocketStatusListener {
 		}
 		
 		/**
-		 * finishTask:(ÕâÀïÓÃÒ»¾ä»°ÃèÊöÕâ¸ö·½·¨µÄ×÷ÓÃ). <br/>
-		 * TODO(ÕâÀïÃèÊöÕâ¸ö·½·¨ÊÊÓÃÌõ¼ş ¨C ¿ÉÑ¡).<br/>
+		 * finishTask:(è¿™é‡Œç”¨ä¸€å¥è¯æè¿°è¿™ä¸ªæ–¹æ³•çš„ä½œç”¨). <br/>
+		 * TODO(è¿™é‡Œæè¿°è¿™ä¸ªæ–¹æ³•é€‚ç”¨æ¡ä»¶ â€“ å¯é€‰).<br/>
 		 * @throws IOException 
 		 *
 		 */

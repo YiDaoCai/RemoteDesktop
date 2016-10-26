@@ -15,7 +15,6 @@ import DesktopServerUI.watchFrame;
 
 public class ServerShot extends Thread{  
 	private static Map<InetAddress, JButton> UserList = new HashMap<InetAddress, JButton>();
-    private static final long serialVersionUID = 1L;  
     Dimension screenSize;  
     
     public ServerShot() {  
@@ -40,11 +39,11 @@ public class ServerShot extends Thread{
   
         public synchronized void run() {  
             ServerSocket ss = null;  
-            int i = 0;
+            //int i = 0;
             try {  
-                ss = new ServerSocket(5001);// Ì½Ìı5001¶Ë¿ÚµÄÁ¬½Ó  
+                ss = new ServerSocket(5001);// æ¢å¬5001ç«¯å£çš„è¿æ¥  
                 while (true) {  
-                	System.out.println(i++);
+                	//System.out.println(i++);
                     Socket s = null;  
                     try {  
                         s = ss.accept();
@@ -57,7 +56,7 @@ public class ServerShot extends Thread{
                         ZipInputStream zis = new ZipInputStream(s  
                                 .getInputStream());  
                         zis.getNextEntry();  
-                        cimage = ImageIO.read(zis);// °ÑZIPÁ÷×ª»»ÎªÍ¼Æ¬
+                        cimage = ImageIO.read(zis);// æŠŠZIPæµè½¬æ¢ä¸ºå›¾ç‰‡
                         if(watchFrame.isVis()) {
                         	if(s.getInetAddress().equals(watchFrame.getInetAddress())) {
                         		int width = watchFrame.getFrame().getWidth();

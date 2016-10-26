@@ -23,13 +23,13 @@ public class FileFrame {
 	private int flag;
 	public FileFrame(ServerThread server) {
 		this.server = server;
-		frm = new JFrame("文件传输");
-		open = new JButton("选择文件");
-		confirm = new JButton("确定");
+		frm = new JFrame("鏂囦欢浼犺緭");
+		open = new JButton("閫夋嫨鏂囦欢");
+		confirm = new JButton("纭畾");
 		row1 = new JPanel();
 		row2 = new JPanel();
 		fc = new JFileChooser();
-		filePathTF = new JLabel("请选择文件");
+		filePathTF = new JLabel("璇烽�夋嫨鏂囦欢");
 		
 		frm.setSize(80, 50);
 		Container c = frm.getContentPane();
@@ -75,7 +75,7 @@ public class FileFrame {
 	}
 	
 	private void confirmFile() {
-		server.sendFile(filePathTF.getText());
+		//server.sendFile(filePathTF.getText());
 		setVis(false);
 	}
 	public String getFileName() {

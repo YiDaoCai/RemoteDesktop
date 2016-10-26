@@ -22,25 +22,28 @@ public class ClientDialogUI {
 	public Socket getSocket() {
 		return client.getSocket();
 	}
+	public String getInetAddress() {
+		return client.getSelfAddress();
+	}
 	public ClientDialogUI(Client c) {
 		client = c;
-		chat = new JFrame("ÁÄÌìÊÒ");
-		send = new JButton("·¢ËÍ");
-		raisehand = new JButton("¾ÙÊÖ");
+		chat = new JFrame("èŠå¤©å®¤");
+		send = new JButton("å‘é€");
+		raisehand = new JButton("ä¸¾æ‰‹");
 		row1 = new JPanel();
 		row2 = new JPanel();
 		row3 = new JPanel(new GridLayout(1, 2));
 		msg = new JTextArea(5, 25);
 		msg.setTabSize(4);
-		msg.setFont(new Font("ËÎÌå", Font.BOLD, 16));
+		msg.setFont(new Font("å®‹ä½“", Font.BOLD, 16));
 		msg.setLineWrap(true);
 		msg.setWrapStyleWord(true);
 		
 		session = new JTextArea(20, 25);
 		session.setLineWrap(true);
 		session.setWrapStyleWord(true);
-		session.setFont(new Font("ËÎÌå", Font.BOLD, 16));
-		session.append("»¶Ó­À´µ½ÁÄÌìÊÒ\n");
+		session.setFont(new Font("å®‹ä½“", Font.BOLD, 16));
+		session.append("æ¬¢è¿æ¥åˆ°èŠå¤©å®¤\n");
 		session.setEditable(false);
 		sessionRoll = new JScrollPane(session);
 		msgRoll = new JScrollPane(msg);
@@ -82,7 +85,7 @@ public class ClientDialogUI {
 					msg.setText(null);
 				}
 			} else if(e.getSource() == raisehand) {
-				session.append("Me:ÎÒ¾ÙÁËÊÖ\n");
+				session.append("Me:æˆ‘ä¸¾äº†æ‰‹\n");
 				client.send(Information.createRaiseHand(client.getSelfAddress()));
 			}
 		}

@@ -14,6 +14,7 @@ public class Server {
 	private final String HostName;
 	private int port;
 	private ServerSocket server;
+	private static String name = "Server";
 	public Server(DesktopRemoteType type) throws IOException {
 		InetAddress ia=null;
         try {
@@ -30,7 +31,7 @@ public class Server {
 	}
 	/**
 	 * @return
-	 * 打开Socket通信
+	 * 鎵撳紑Socket閫氫俊
 	 * @throws IOException 
 	 */
 	public class openSocket implements Runnable {
@@ -66,5 +67,11 @@ public class Server {
 		ServerMainFrame.getFrame();
 		new Server(DesktopRemoteType.OtherType);
 		new ServerShot().start();
+	}
+	public static String getName() {
+		return name;
+	}
+	public static void setName(String name) {
+		Server.name = name;
 	}
 }
