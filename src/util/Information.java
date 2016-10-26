@@ -30,7 +30,7 @@ public class Information {
 		try {
 			JSONObject Json = new JSONObject(json);
 			Map<String, Object> result = new HashMap<String, Object>();
-			Iterator iterator = Json.keys();
+			Iterator<?> iterator = Json.keys();
 			String key;
 			while(iterator.hasNext()) {
 				key = (String)iterator.next();
@@ -41,7 +41,7 @@ public class Information {
 			date = (Long) result.get("date");
 			isPub = (Boolean) result.get("isPub");
 			//content = new String("hello");
-			if(type.equals("session")) {
+			if(!type.equals("raisehand")) {
 				content = result.get("content").toString();
 			}
 		} catch (JSONException e) {
@@ -59,6 +59,9 @@ public class Information {
 	}
 	public static Information createRaiseHand(String fromAdd) {
 		return new Information("raisehand", fromAdd, null, true);
+	}
+	public static Information createOperator(String type, String cmd) {
+		return new Information(type, "Server", cmd, true);
 	}
 	public static Information createSession(String fromAdd, String content) {
 		return new Information("session", fromAdd, content, true);
@@ -79,7 +82,7 @@ public class Information {
 	}
 //	public static void main(String[] args) throws UnknownHostException {
 //		System.out.println(createRaiseHand(InetAddress.getLocalHost().toString()));
-//		System.out.println(createSession(InetAddress.getLocalHost().toString(), "ÎÒÒªÉÏÌìÀ²"));
+//		System.out.println(createSession(InetAddress.getLocalHost().toString(), "ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"));
 //	}
 }
 

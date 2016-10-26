@@ -29,16 +29,16 @@ public class DesktopServerRaiseHandFrame {
 		height = 80;
 		frm = new JFrame();
 		text = new JLabel();
-		// ¼ÓÉÏÕâÒ»¾ä¾Í¿ÉÒÔÏÔÊ¾Ò»¸ö½öÓĞ¹Ø±Õ£¬×îĞ¡»¯£¬×î´ó»¯µÄ°´Å¥µÄFrameÁË
+		// åŠ ä¸Šè¿™ä¸€å¥å°±å¯ä»¥æ˜¾ç¤ºä¸€ä¸ªä»…æœ‰å…³é—­ï¼Œæœ€å°åŒ–ï¼Œæœ€å¤§åŒ–çš„æŒ‰é’®çš„Frameäº†
 		screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
-		// ÔÙ¼ÓÉÏÕâÒ»¾ä¾Í¿ÉÒÔÏÔÊ¾Ò»¸öÔÚ×óÉÏ½Ç£¬ÓµÓĞÖ¸¶¨´óĞ¡µÄFrameÁË
+		// å†åŠ ä¸Šè¿™ä¸€å¥å°±å¯ä»¥æ˜¾ç¤ºä¸€ä¸ªåœ¨å·¦ä¸Šè§’ï¼Œæ‹¥æœ‰æŒ‡å®šå¤§å°çš„Frameäº†
 		frm.setSize(width, height);
 		frm.setLocation(screenSize.width - width, screenSize.height - height
 				- 40);
 		frm.setResizable(false);
 		
-		// Èç¹ûÃ»ÓĞÕâÒ»¾ä£¬ÔÚµã»÷¹Ø±ÕFrameµÄÊ±ºò³ÌĞòÆäÊµ»¹ÊÇÔÚÖ´ĞĞ×´Ì¬ÖĞµÄ£¬¼ÓÉÏÕâÒ»¾ä²ÅËãÊÇÕæÕıµÄ°Ñ×ÊÔ´ÊÍ·ÅµôÁË
+		// å¦‚æœæ²¡æœ‰è¿™ä¸€å¥ï¼Œåœ¨ç‚¹å‡»å…³é—­Frameçš„æ—¶å€™ç¨‹åºå…¶å®è¿˜æ˜¯åœ¨æ‰§è¡ŒçŠ¶æ€ä¸­çš„ï¼ŒåŠ ä¸Šè¿™ä¸€å¥æ‰ç®—æ˜¯çœŸæ­£çš„æŠŠèµ„æºé‡Šæ”¾æ‰äº†
 		//frm.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		
 		Container c = frm.getContentPane();
@@ -46,7 +46,7 @@ public class DesktopServerRaiseHandFrame {
 		JPanel panel = new JPanel();
 		c.add(panel, BorderLayout.CENTER);
 		// panel.setVisible(true);
-		text.setFont(new Font("ËÎÌå", Font.BOLD, 24));
+		text.setFont(new Font("å®‹ä½“", Font.BOLD, 24));
 		panel.add(text);
 	}
 
@@ -66,10 +66,10 @@ public class DesktopServerRaiseHandFrame {
 	}
 
 	/*public static void main(String[] args) {
-		// ÏÖÔÚ´´½¨ÁËÒ»¸ö¶ÔÏó£¬²»¹ıÊ²Ã´¶¼ÏÔÊ¾²»³öÀ´
+		// ç°åœ¨åˆ›å»ºäº†ä¸€ä¸ªå¯¹è±¡ï¼Œä¸è¿‡ä»€ä¹ˆéƒ½æ˜¾ç¤ºä¸å‡ºæ¥
 		try {
 			DesktopServerRaiseHandFrame d = new DesktopServerRaiseHandFrame();
-			d.setText("ÓĞÍ¬Ñ§¾ÙÊÖ");
+			d.setText("æœ‰åŒå­¦ä¸¾æ‰‹");
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

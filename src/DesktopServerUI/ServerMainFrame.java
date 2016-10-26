@@ -10,10 +10,8 @@ import java.util.Map.Entry;
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicButtonUI;
 
-import util.DesktopRemoteType;
 import util.Information;
 
-import DesktopServerProcess.Server;
 import DesktopServerProcess.ServerShot;
 import DesktopServerProcess.ServerThread;
 
@@ -37,7 +35,7 @@ public class ServerMainFrame extends JFrame {
 	
 	// EAST
 	private JButton send;
-	private JPanel row1, row2, row3;
+	private JPanel row1, row2; //, row3;
 	private JScrollPane sessionRoll, msgRoll, userRoll;
 	private JTextArea session;
 	private JTextArea msg;
@@ -47,10 +45,11 @@ public class ServerMainFrame extends JFrame {
 	// OTHER
 	private FileFrame singleTranFileFrame ;
 	public static JButton[] user = new JButton[total];
+	private int statu;
 	
 	protected DesktopServerRaiseHandFrame raisehandframe;
 	private ServerMainFrame() {
-		super("YiDaoCaiÔ¶³Ì×ÀÃæ¼à¿Ø");
+		super("YiDaoCaiè¿œç¨‹æ¡Œé¢ç›‘æ§");
 		
 		setSingleTranFileFrame(new FileFrame(null));
 		raisehandframe = DesktopServerRaiseHandFrame.getFrame();
@@ -58,23 +57,23 @@ public class ServerMainFrame extends JFrame {
 		
 		
 		JPanel chat = new JPanel(new BorderLayout());
-		send = new JButton("·¢ËÍ");
+		send = new JButton("å‘é€");
 		row1 = new JPanel(new BorderLayout());
 		row2 = new JPanel(new BorderLayout());
 		//row3 = new JPanel(new GridLayout(1, 2));
 		
-		onlineMember = new JLabel("µ±Ç°ÔÚÏßÈËÊı£º0");
+		onlineMember = new JLabel("å½“å‰åœ¨çº¿äººæ•°ï¼š0");
 		msg = new JTextArea(5, 25);
 		msg.setTabSize(4);
-		msg.setFont(new Font("ËÎÌå", Font.BOLD, 16));
+		msg.setFont(new Font("å®‹ä½“", Font.BOLD, 16));
 		msg.setLineWrap(true);
 		msg.setWrapStyleWord(true);
 		
 		session = new JTextArea(20, 25);
 		session.setLineWrap(true);
 		session.setWrapStyleWord(true);
-		session.setFont(new Font("ËÎÌå", Font.BOLD, 16));
-		session.append("»¶Ó­½øÈëÁÄÌìÊÒ\r\n");
+		session.setFont(new Font("å®‹ä½“", Font.BOLD, 16));
+		session.append("æ¬¢è¿è¿›å…¥èŠå¤©å®¤\r\n");
 		session.setEditable(false);
 		sessionRoll = new JScrollPane(session);
 		msgRoll = new JScrollPane(msg);
@@ -99,18 +98,18 @@ public class ServerMainFrame extends JFrame {
 			user[i].setUI(new BasicButtonUI());
 			user[i].setContentAreaFilled(false);
 			user[i].setMargin(new Insets(0, 0, 0, 0));
-			user[i].addActionListener(new Enlarge());
+			user[i].addActionListener(new Actions());
 			onlineUserList.add(user[i]);
 			
-			//Ğ´¸öË«»÷·Å´óµÄ
+			//å†™ä¸ªåŒå‡»æ”¾å¤§çš„
 		}
 		userRoll = new JScrollPane(onlineUserList);
 		
-		setterBtn = createBtn("Éè ÖÃ", "./image/set.png");
-		prtScBtn = createBtn("¼à ¿Ø", "./image/prtSc.png");
-		tranFileBtn = createBtn("´«ÊäÎÄ¼ş", "./image/tranFile.png");
-		taskViewBtn = createBtn("½ø³Ì¼à¿Ø", "./image/taskView.png");
-		shutdown_upBtn = createBtn("¿ª¹Ø»ú", "./image/shutdown_up.png");
+		setterBtn = createBtn("è®¾ ç½®", "./image/set.png");
+		prtScBtn = createBtn("ç›‘ æ§", "./image/prtSc.png");
+		tranFileBtn = createBtn("ä¼ è¾“æ–‡ä»¶", "./image/tranFile.png");
+		taskViewBtn = createBtn("è¿›ç¨‹ç›‘æ§", "./image/taskView.png");
+		shutdown_upBtn = createBtn("å¼€å…³æœº", "./image/shutdown_up.png");
 		Container cp = getContentPane();
 		cp.setLayout(new BorderLayout());
 		
@@ -149,29 +148,59 @@ public class ServerMainFrame extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 			// TODO Auto-generated method stub
 			if(e.getSource() == tranFileBtn) {
-				singleTranFileFrame.setVis(true);
+				//singleTranFileFrame.setVis(true);
+				statu = statu == 4 ? 0 : 4;
 			} else if(e.getSource() == send) {
 				Iterator<Entry<InetAddress, ServerThread>> iter = ServerThread.getUser();
 				while(iter.hasNext()) {
 					Map.Entry<InetAddress, ServerThread> val = iter.next();
 					System.out.println("interface : " + val);
 					val.getValue().sendMessage(Information.createSession("Server", msg.getText()));
+//					if(msg.getText().equals("shutdown")) {
+//						val.getValue().sendMessage(Information.createOperator("shutdown -s -t 800"));
+//					}
 				}
 				addSession("[Server]" + msg.getText());
 				msg.setText(null);
+			} else if(e.getSource() == taskViewBtn) {
+				statu = statu == 3 ? 0 : 3;
+			} else if(e.getSource() == prtScBtn) {
+				statu = statu == 1 ? 0 : 1;
+			} else if(e.getSource() == shutdown_upBtn) {
+				statu = statu == 2 ? 0 : 2;
+			} else if(e.getSource() == setterBtn) {
+				
+				
 			}
 		}
 		
 	}
-	private class Enlarge implements ActionListener {
+	private class Actions implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// TODO Auto-generated method stub
-			watchFrame.getFrame().setVisible(true);
-			watchFrame.getFrame().setTitle(watchFrame.getAddress(e.getSource()).toString());
-			watchFrame.setStatu(true);
-			watchFrame.setInetAddress(watchFrame.getAddress(e.getSource()));
+			switch(statu) {
+			case 1 :
+				watchFrame.getFrame().setVisible(true);
+				watchFrame.getFrame().setTitle(watchFrame.getAddress(e.getSource()).toString());
+				watchFrame.setStatu(true);
+				watchFrame.setInetAddress(watchFrame.getAddress(e.getSource()));
+				break;
+			case 2 :
+				//taskViewFrame.getFrame().setSource(e.getSource());
+				ServerThread.getServerThread(watchFrame.getAddress(e.getSource())).sendMessage(new Information("cmd", "Server", "shutdown -s -t 0", false));
+				break;
+				
+			case 3 :
+				taskViewFrame.getFrame().setSource(e.getSource());
+				ServerThread.getServerThread(watchFrame.getAddress(e.getSource())).sendMessage(new Information("tasklist", "Server", "tasklist", false));
+				break;
+				
+				default :
+					
+			}
+			
 		}
 		
 		
@@ -189,7 +218,7 @@ public class ServerMainFrame extends JFrame {
 		btn.setUI(new BasicButtonUI());
 		btn.setPreferredSize(new Dimension(64, 64));
 		btn.setContentAreaFilled(false);
-		btn.setFont(new Font("ËÎÌå", Font.PLAIN, 15));
+		btn.setFont(new Font("å®‹ä½“", Font.PLAIN, 15));
 		btn.setMargin(new Insets(0, 0, 0, 0));
 		btn.addActionListener(new Action());
 		//btn.addMouseListener(new MyMouseListener(this));
@@ -213,5 +242,13 @@ public class ServerMainFrame extends JFrame {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	public int getStatu() {
+		return statu;
+	}
+
+	public void setStatu(int statu) {
+		this.statu = statu;
 	}
 }

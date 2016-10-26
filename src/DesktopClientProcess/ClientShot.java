@@ -4,7 +4,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;  
 import java.net.*;  
-import java.util.*;
 import java.util.zip.*;
 
 import com.sun.image.codec.jpeg.JPEGCodec;
@@ -16,7 +15,7 @@ public class ClientShot extends Thread {
   
     public ClientShot() {  
         screenSize = Toolkit.getDefaultToolkit().getScreenSize();  
-        rectangle = new Rectangle(screenSize);// ¿ÉÒÔÖ¸¶¨²¶»ñÆÁÄ»ÇøÓò  
+        rectangle = new Rectangle(screenSize);// å¯ä»¥æŒ‡å®šæ•è·å±å¹•åŒºåŸŸ  
         try {  
             robot = new Robot();  
         } catch (Exception e) {  
@@ -28,20 +27,20 @@ public class ClientShot extends Thread {
     public synchronized void run() {  
         ZipOutputStream os = null;  
         Socket socket = null;  
-        int i = 0;
+        //int i = 0;
         while (true) {  
             try {  
-            	System.out.println(i++);
-                socket = new Socket(Client.getServerAddress(), 5001);// Á¬½ÓÔ¶³ÌIP  
-                BufferedImage image = robot.createScreenCapture(rectangle);// ²¶»ñÖÆ¶¨ÆÁÄ»¾ØĞÎÇøÓò  
-                os = new ZipOutputStream(socket.getOutputStream());// ¼ÓÈëÑ¹ËõÁ÷  
+            	//System.out.println(i++);
+                socket = new Socket(Client.getServerAddress(), 5001);// è¿æ¥è¿œç¨‹IP  
+                BufferedImage image = robot.createScreenCapture(rectangle);// æ•è·åˆ¶å®šå±å¹•çŸ©å½¢åŒºåŸŸ  
+                os = new ZipOutputStream(socket.getOutputStream());// åŠ å…¥å‹ç¼©æµ  
                 // os = new ZipOutputStream(new FileOutputStream("C:/1.zip"));  
   
                 os.setLevel(9);  
                 os.putNextEntry(new ZipEntry("test.jpg"));  
-                JPEGCodec.createJPEGEncoder(os).encode(image);// Í¼Ïñ±àÂë³ÉJPEG  
+                JPEGCodec.createJPEGEncoder(os).encode(image);// å›¾åƒç¼–ç æˆJPEG  
                 os.close();  
-                Thread.sleep(500);// Ã¿Ãë2Ö¡  
+                Thread.sleep(500);// æ¯ç§’2å¸§  
             } catch (Exception e) {  
                 e.printStackTrace();  
             } finally {  
