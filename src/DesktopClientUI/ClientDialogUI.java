@@ -64,12 +64,39 @@ public class ClientDialogUI {
 		
 		chat.setResizable(false);
 		chat.setLocation(1050, 200);
-		//chat.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		chat.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		chat.setVisible(true);
 		
+		//setDesktop();
 	}
 	
+//	public void setDesktop() {
+//		SystemTray st = SystemTray.getSystemTray();
+//		PopupMenu pm = new PopupMenu();
+//		if (SystemTray.isSupported()) {// 判断当前平台是否支持系统托盘
+//			Image image = Toolkit.getDefaultToolkit().getImage(
+//					("src/java-icon.png"));// 定义托盘图标的图片
+//			// /////////设置右击图标菜单
+//			MenuItem openDialog = new MenuItem("显示聊天窗口");
+//			openDialog.addActionListener(new ActionListener() {
+//				public void actionPerformed(ActionEvent e) {
+//					chat.setVisible(true);
+//					System.exit(0);
+//				}
+//			});
+//			// 关闭
+//			MenuItem exitMenu = new MenuItem("退出");
+//			exitMenu.addActionListener(new ActionListener() {
+//				public void actionPerformed(ActionEvent e) {
+//					System.exit(0);
+//				}
+//			});
+//			pm.add(openDialog);
+//			pm.addSeparator();// 横线
+//			pm.add(exitMenu);
+//		}
+//	}
 	public void addSession(String value) {
 		session.append(value + "\r\n");
 	}

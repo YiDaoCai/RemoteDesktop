@@ -14,13 +14,13 @@ public class DesktopRemoteType {
 	public int getPort() {
 		return port;
 	}
-
 	
 	private String type;
 	private int port;
 	
 	
-	public static final DesktopRemoteType FileTranType = new DesktopRemoteType("FileTran", 1234);
+	public static final DesktopRemoteType ServerFile = new DesktopRemoteType("ServerFile", 1234);
 	public static final DesktopRemoteType OtherType = new DesktopRemoteType("Other", 5678);
 	public static final DesktopRemoteType ImageType = new DesktopRemoteType("Image", 3456);
+	public static final DesktopRemoteType ClientFile = new DesktopRemoteType("ClientFile", 6789);
 }

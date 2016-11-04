@@ -10,11 +10,14 @@ import java.util.zip.*;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
+import util.PCPanel;
+
 import DesktopServerUI.ServerMainFrame;
 import DesktopServerUI.watchFrame;
 
 public class ServerShot extends Thread{  
-	private static Map<InetAddress, JButton> UserList = new HashMap<InetAddress, JButton>();
+	//private static Map<InetAddress, JButton> UserList = new HashMap<InetAddress, JButton>();
+	private static Map<String, PCPanel> UserList = new HashMap<String, PCPanel>();
     Dimension screenSize;  
     
     public ServerShot() {  
@@ -32,6 +35,12 @@ public class ServerShot extends Thread{
     public static int getTotal() {
     	return UserList.size();
     }
+//    public static JButton get(InetAddress ia) {
+//    	return UserList.get(ia);
+//    }
+    public static PCPanel get(String string) {
+    	return UserList.get(string);
+    }
     class Screen extends JPanel implements Runnable {  
   
         private static final long serialVersionUID = 1L;  
@@ -47,22 +56,23 @@ public class ServerShot extends Thread{
                     Socket s = null;  
                     try {  
                         s = ss.accept();
-                        if(!UserList.containsKey(s.getInetAddress())) {
-                        	JButton jb = ServerMainFrame.addBtn();
-                        	UserList.put(s.getInetAddress(), jb);
-                        	watchFrame.addBtnList(jb, s.getInetAddress());
+                        if(!UserList.containsKey(s.getInetAddress().getHostAddress())) {
+                        	PCPanel jb = ServerMainFrame.addBtn();
+                        	jb.setClient(s);
+                        	UserList.put(s.getInetAddress().getHostAddress(), jb);
                         }
-                        JButton jb = UserList.get(s.getInetAddress());
+                        PCPanel jb = UserList.get(s.getInetAddress().getHostAddress());
+                        jb.setVisible(true);
                         ZipInputStream zis = new ZipInputStream(s  
                                 .getInputStream());  
                         zis.getNextEntry();  
                         cimage = ImageIO.read(zis);// 把ZIP流转换为图片
-                        if(watchFrame.isVis()) {
-                        	if(s.getInetAddress().equals(watchFrame.getInetAddress())) {
+                        if(watchFrame.getFrame().isVis()) {
+                        	if(s.getInetAddress().getHostAddress().equals(watchFrame.getFrame().getIp())) {
                         		int width = watchFrame.getFrame().getWidth();
                         		int height = watchFrame.getFrame().getHeight();
                         		cimage = cimage.getScaledInstance(width, height, Image.SCALE_FAST);
-                        		watchFrame.paint(cimage);
+                        		watchFrame.getFrame().paint(cimage);
                         	}
                         } else {
                         	cimage = cimage.getScaledInstance(200,150,Image.SCALE_FAST);

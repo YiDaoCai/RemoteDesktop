@@ -12,7 +12,7 @@ import java.util.Map.Entry;
 import util.Information;
 
 public class ServerThread extends ServerSocketHandler {
-    private static Map<InetAddress, ServerThread> UserList = new HashMap<InetAddress, ServerThread>();
+    private static Map<String, ServerThread> UserList = new HashMap<String, ServerThread>();
     //private BufferedReader is;
 	public ServerThread(Socket c) throws IOException {  
         super(c);
@@ -27,17 +27,17 @@ public class ServerThread extends ServerSocketHandler {
 	public static int getUserList() {
 		return UserList.size();
 	}
-	public static ServerThread getServerThread(InetAddress ia) {
-		return UserList.get(ia);
+	public static ServerThread getServerThread(String ip) {
+		return UserList.get(ip);
 	}
-	public static Iterator<Entry<InetAddress, ServerThread>> getUser() {
+	public static Iterator<Entry<String, ServerThread>> getUser() {
 		return UserList.entrySet().iterator();
 	}
-	public static void addUserList(InetAddress intelAdd, ServerThread st) {
+	public static void addUserList(String intelAdd, ServerThread st) {
 		UserList.put(intelAdd, st);
 	}
-	public static void removeUserList(InetAddress inetAddress) {
-		UserList.remove(inetAddress);
+	public static void removeUserList(String string) {
+		UserList.remove(string);
 	}
 	/**
 	 * @return

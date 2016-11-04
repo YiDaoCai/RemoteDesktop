@@ -3,6 +3,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.InetAddress;
+import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -11,6 +13,7 @@ import javax.swing.*;
 import javax.swing.plaf.basic.BasicButtonUI;
 
 import util.Information;
+import util.PCPanel;
 
 import DesktopServerProcess.ServerShot;
 import DesktopServerProcess.ServerThread;
@@ -22,7 +25,20 @@ public class ServerMainFrame extends JFrame {
 	private static final int total = 30;
 	private static final long serialVersionUID = 1L;
 	private static ServerMainFrame servermainframe;
-	
+	static private ArrayList<String> ips = new ArrayList<String>();
+	public static void ClearIp() {
+		ips.clear();
+	}
+	public static void add(String ip) {
+		ips.add(ip);
+	}
+	public static boolean checkboxes() {
+		ClearIp();
+		for(int i=0; i<total; i++) {
+			if(user[i].isSelected()) add(user[i].getIp());
+		}
+		return ips.size() != 0;
+	}
 	public static ServerMainFrame getFrame() {
 		if(servermainframe == null) {
 			servermainframe = new ServerMainFrame();
@@ -30,7 +46,7 @@ public class ServerMainFrame extends JFrame {
 		return servermainframe;
 	}
 	// NORTH
-	private JButton setterBtn,prtScBtn,tranFileBtn,taskViewBtn,shutdown_upBtn;
+	private JButton tranFileBtn,taskViewBtn,shutdown_upBtn;// setterBtn prtScBtn
 	//private FileFrame fileframe;
 	
 	// EAST
@@ -44,17 +60,18 @@ public class ServerMainFrame extends JFrame {
 	
 	// OTHER
 	private FileFrame singleTranFileFrame ;
-	public static JButton[] user = new JButton[total];
+	//public static JButton[] user = new JButton[total];
+	public static PCPanel[] user = new PCPanel[total];
 	private int statu;
-	
+	private watchFrame watchframe;
 	protected DesktopServerRaiseHandFrame raisehandframe;
 	private ServerMainFrame() {
 		super("YiDaoCai远程桌面监控");
 		
-		setSingleTranFileFrame(new FileFrame(null));
+		setSingleTranFileFrame(FileFrame.getFrame());
 		raisehandframe = DesktopServerRaiseHandFrame.getFrame();
 		
-		
+		watchframe = watchFrame.getFrame();
 		
 		JPanel chat = new JPanel(new BorderLayout());
 		send = new JButton("发送");
@@ -92,24 +109,32 @@ public class ServerMainFrame extends JFrame {
 		onlineUserList = new JPanel();
 		onlineUserList.setLayout(new GridLayout(10,3));//new GridLayout(18, 3)
 		for(int i = 0; i < total;i++){
-			user[i]  = new JButton();
+			user[i]  = new PCPanel();
 			user[i].setPreferredSize(new Dimension(200, 150));
-			user[i].setVisible(false);
-			user[i].setUI(new BasicButtonUI());
-			user[i].setContentAreaFilled(false);
-			user[i].setMargin(new Insets(0, 0, 0, 0));
+			//user[i].setVisible(true);
+			//user[i].setUI(new BasicButtonUI());
+			//user[i].setContentAreaFilled(false);
+			//user[i].setMargin(new Insets(0, 0, 0, 0));
 			user[i].addActionListener(new Actions());
+			
+//			user[i]  = new JButton();
+//			user[i].setPreferredSize(new Dimension(200, 150));
+//			user[i].setVisible(false);
+//			user[i].setUI(new BasicButtonUI());
+//			user[i].setContentAreaFilled(false);
+//			user[i].setMargin(new Insets(0, 0, 0, 0));
+//			user[i].addActionListener(new Actions());
 			onlineUserList.add(user[i]);
 			
 			//写个双击放大的
 		}
 		userRoll = new JScrollPane(onlineUserList);
 		
-		setterBtn = createBtn("设 置", "./image/set.png");
-		prtScBtn = createBtn("监 控", "./image/prtSc.png");
+		//setterBtn = createBtn("设 置", "./image/set.png");
+		//prtScBtn = createBtn("监 视", "./image/prtSc.png");
 		tranFileBtn = createBtn("传输文件", "./image/tranFile.png");
 		taskViewBtn = createBtn("进程监控", "./image/taskView.png");
-		shutdown_upBtn = createBtn("开关机", "./image/shutdown_up.png");
+		shutdown_upBtn = createBtn("关 机", "./image/shutdown_up.png");
 		Container cp = getContentPane();
 		cp.setLayout(new BorderLayout());
 		
@@ -117,8 +142,8 @@ public class ServerMainFrame extends JFrame {
 		//tranFileBtn.addActionListener(new Action());
 		
 		
-		p.add(setterBtn);
-		p.add(prtScBtn);
+		//p.add(setterBtn);
+		//p.add(prtScBtn);
 		p.add(tranFileBtn);
 		p.add(taskViewBtn);
 		p.add(shutdown_upBtn);
@@ -135,8 +160,10 @@ public class ServerMainFrame extends JFrame {
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	
-	public static JButton addBtn() {
-		JButton jb = user[ServerShot.getTotal()];
+	//public static JButton addBtn() {
+	public static PCPanel addBtn() {
+		//JButton jb = user[ServerShot.getTotal()];
+		PCPanel jb = user[ServerShot.getTotal()];
 		jb.setVisible(true);
 		//servermainframe.onlineUserList.add(jb);
 		return jb;
@@ -148,12 +175,17 @@ public class ServerMainFrame extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 			// TODO Auto-generated method stub
 			if(e.getSource() == tranFileBtn) {
-				//singleTranFileFrame.setVis(true);
-				statu = statu == 4 ? 0 : 4;
+				if(checkboxes()) {
+					FileFrame.setIps(ips);
+					singleTranFileFrame.setVis(true);
+				} else {
+					javax.swing.JOptionPane.showMessageDialog(null, "您未选择任何计算机,不能进行文件传输!", "警告", JOptionPane.ERROR_MESSAGE);
+				}
+				//statu = statu == 4 ? 0 : 4;
 			} else if(e.getSource() == send) {
-				Iterator<Entry<InetAddress, ServerThread>> iter = ServerThread.getUser();
+				Iterator<Entry<String, ServerThread>> iter = ServerThread.getUser();
 				while(iter.hasNext()) {
-					Map.Entry<InetAddress, ServerThread> val = iter.next();
+					Map.Entry<String, ServerThread> val = iter.next();
 					System.out.println("interface : " + val);
 					val.getValue().sendMessage(Information.createSession("Server", msg.getText()));
 //					if(msg.getText().equals("shutdown")) {
@@ -164,14 +196,15 @@ public class ServerMainFrame extends JFrame {
 				msg.setText(null);
 			} else if(e.getSource() == taskViewBtn) {
 				statu = statu == 3 ? 0 : 3;
-			} else if(e.getSource() == prtScBtn) {
-				statu = statu == 1 ? 0 : 1;
 			} else if(e.getSource() == shutdown_upBtn) {
-				statu = statu == 2 ? 0 : 2;
-			} else if(e.getSource() == setterBtn) {
-				
-				
-			}
+				if(!checkboxes()) {
+					javax.swing.JOptionPane.showMessageDialog(null, "您未选择任何计算机,不能关机!", "警告", JOptionPane.ERROR_MESSAGE);
+				} else {
+					for(String ip:ips) {
+						ServerThread.getServerThread(ip).sendMessage(new Information("cmd", "Server", "shutdown -s -t 600", false));
+					}
+				}
+			} 
 		}
 		
 	}
@@ -182,19 +215,19 @@ public class ServerMainFrame extends JFrame {
 			// TODO Auto-generated method stub
 			switch(statu) {
 			case 1 :
-				watchFrame.getFrame().setVisible(true);
-				watchFrame.getFrame().setTitle(watchFrame.getAddress(e.getSource()).toString());
-				watchFrame.setStatu(true);
-				watchFrame.setInetAddress(watchFrame.getAddress(e.getSource()));
+				//watchframe.setVisible(true);
+				//watchframe.setTitle(watchFrame.getAddress(e.getSource()).toString());
+				//watchframe.setStatu(true);
+				//watchframe.setInetAddress(watchFrame.getAddress(e.getSource()));
 				break;
 			case 2 :
 				//taskViewFrame.getFrame().setSource(e.getSource());
-				ServerThread.getServerThread(watchFrame.getAddress(e.getSource())).sendMessage(new Information("cmd", "Server", "shutdown -s -t 0", false));
+				
 				break;
 				
 			case 3 :
-				taskViewFrame.getFrame().setSource(e.getSource());
-				ServerThread.getServerThread(watchFrame.getAddress(e.getSource())).sendMessage(new Information("tasklist", "Server", "tasklist", false));
+				//taskViewFrame.getFrame().setIp(e.getSource());
+				//ServerThread.getServerThread(watchFrame.getAddress(e.getSource())).sendMessage(new Information("tasklist", "Server", "tasklist", false));
 				break;
 				
 				default :
@@ -215,9 +248,9 @@ public class ServerMainFrame extends JFrame {
 		Image smallImage = image.getScaledInstance(64,64,Image.SCALE_FAST);
 		JButton btn = new JButton(text, new ImageIcon(smallImage));
 		
-		btn.setUI(new BasicButtonUI());
+		//btn.setUI(new BasicButtonUI());
 		btn.setPreferredSize(new Dimension(64, 64));
-		btn.setContentAreaFilled(false);
+		//btn.setContentAreaFilled(false);
 		btn.setFont(new Font("宋体", Font.PLAIN, 15));
 		btn.setMargin(new Insets(0, 0, 0, 0));
 		btn.addActionListener(new Action());
@@ -251,4 +284,6 @@ public class ServerMainFrame extends JFrame {
 	public void setStatu(int statu) {
 		this.statu = statu;
 	}
+	
+	
 }
