@@ -21,6 +21,7 @@ public class taskViewFrame {
 	private JScrollPane listRoll;
 	private static taskViewFrame instance;
 	private Object source;
+	private String ip;
 	private taskViewFrame() {
 		main = new JFrame("进程监控");
 		list = new JPanel(new GridLayout(0, 1));
@@ -30,6 +31,9 @@ public class taskViewFrame {
 		c.add(listRoll);
 		
 		main.setSize(new Dimension(600, 800));
+	}
+	public void setIp(String Ip) {
+		ip = Ip;
 	}
 	public static taskViewFrame getFrame() {
 		if(instance == null) instance = new taskViewFrame();
@@ -101,7 +105,7 @@ public class taskViewFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				ServerThread.getServerThread(watchFrame.getAddress(getSource())).sendMessage(new Information("cmd", Server.getName(), "taskkill /F /IM " + name.getText() + " /T", false));
+				ServerThread.getServerThread(ip).sendMessage(new Information("cmd", Server.getName(), "taskkill /F /IM " + name.getText() + " /T", false));
 			}
 			
 		}

@@ -43,14 +43,15 @@ public class ClientShot extends Thread {
                 Thread.sleep(500);// 每秒2帧  
             } catch (Exception e) {  
                 e.printStackTrace();  
-            } finally {  
+            } finally {
                 if (os != null) {  
                     try {  
                         os.close();  
                     } catch (Exception ioe) {  
                     }  
                 }  
-                if (socket != null) {  
+                if (socket != null) {
+                	
                     try {  
                         socket.close();  
                     } catch (IOException e) {  

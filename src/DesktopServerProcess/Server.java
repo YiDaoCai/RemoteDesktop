@@ -14,6 +14,7 @@ public class Server {
 	private final String HostName;
 	private int port;
 	private ServerSocket server;
+	//private ServerSocket fileserver;
 	private static String name = "Server";
 	public Server(DesktopRemoteType type) throws IOException {
 		InetAddress ia=null;
@@ -27,6 +28,7 @@ public class Server {
         this.SelfAddress = ia.getHostAddress();
         port = type.getPort();
         server = new ServerSocket(port, 30);
+        //fileserver = new ServerSocket(DesktopRemoteType.FileTranType.getPort(), 30);
         new Thread(new openSocket()).start();
 	}
 	/**
@@ -40,17 +42,19 @@ public class Server {
 		public void run() {
 			while(true) {
 				ServerThread conn;
+				//Socket ss;
 				try {
 					conn = new ServerThread(server.accept());
-					ServerThread.addUserList(conn.getSocket().getInetAddress(), conn);
+					ServerThread.addUserList(conn.getSocket().getInetAddress().getHostAddress(), conn);
 					conn.listen(true);
-					System.out.println("Server : " + conn);
+					//ss = fileserver.accept();
+					//ServerThread.getServerThread(ss.getInetAddress()).setFileSocket(ss);
+					//System.out.println("Server : " + conn);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				
-				//conn.start();s
 			}
 		}
 	}

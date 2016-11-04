@@ -1,6 +1,11 @@
 package DesktopServerProcess;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -26,6 +31,8 @@ import util.Information;
 public class ServerSocketHandler implements SocketStatusListener {
 	
 	private static ServerMainFrame mainframe = ServerMainFrame.getFrame();
+	
+	protected Socket filesocket = null;
 
 	protected Socket socket = null;
 
@@ -42,6 +49,13 @@ public class ServerSocketHandler implements SocketStatusListener {
 		onSocketStatusChanged(socket, STATUS_OPEN, null);
 	}
 
+	public void setFileSocket(Socket socket) {
+		filesocket = socket;
+	}
+	
+	public void sendFile(String filename) {
+		new SendFile(filename).start();
+	}
 	/**
 	 * sendMessage:(这里用一句话描述这个方法的作用). <br/>
 	 * TODO(这里描述这个方法适用条件 – 可选).<br/>
@@ -89,7 +103,52 @@ public class ServerSocketHandler implements SocketStatusListener {
 			break;
 		}
 	}
-
+	
+	/**
+	 * @return
+	 * 向客户端发送文件
+	 */
+	private class SendFile extends Thread {
+		
+		private String filepath;
+		public SendFile(String filepath) {
+			this.filepath = filepath;
+		}
+		public void run() {
+			File file = new File(filepath);
+			try {
+				DataInputStream fis = new DataInputStream(new BufferedInputStream(new FileInputStream(filepath)));
+	            DataOutputStream ps = new DataOutputStream(filesocket.getOutputStream());
+	            ps.writeUTF(file.getName());
+	            ps.flush();
+	            ps.writeLong((long) file.length());
+	            ps.flush();
+	
+	            int bufferSize = 8192;
+	            byte[] buf = new byte[bufferSize];
+	
+	            while (true) {
+	                int read = 0;
+	                if (fis != null) {
+	                    read = fis.read(buf);
+	                }
+	
+	                if (read <= 0) {
+	                    break;
+	                }
+	                ps.write(buf, 0, read);
+	            }
+	            System.out.println("文件发送完成");
+	            ps.flush();
+	            ps.close();
+	            fis.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	
 	/**
 	 * @author Administrator
 	 * 读操作进程
@@ -140,7 +199,7 @@ public class ServerSocketHandler implements SocketStatusListener {
 			while (listening) {
 				String readStr = null;
 				try {
-					mainframe.addSession("[" + socket.getInetAddress() + "] 已上线");
+					mainframe.addSession("[" + socket.getInetAddress().getHostAddress() + "] 已上线");
 		            mainframe.setOnlineMember("当前在线人数为：" + ServerThread.getUserList());
 		            //System.out.println("当前在线人数为：" + ServerThread.getUserList());
 					while ((readStr = bufferedReader.readLine()) != null) {
@@ -148,18 +207,18 @@ public class ServerSocketHandler implements SocketStatusListener {
 						Information reci = new Information(readStr);
 						
 						if(reci.getType().equals("session")) {
-		                	mainframe.addSession("[" + socket.getInetAddress() + "] 对话 \n" + reci.getContent());
+		                	mainframe.addSession("[" + socket.getInetAddress().getHostAddress() + "] 对话 \n" + reci.getContent());
 		                	
-		                	Iterator<Entry<InetAddress, ServerThread>> iter = ServerThread.getUser();
+		                	Iterator<Entry<String, ServerThread>> iter = ServerThread.getUser();
 		    				while(iter.hasNext()) {
-		    					Map.Entry<InetAddress, ServerThread> val = iter.next();
+		    					Map.Entry<String, ServerThread> val = iter.next();
 		    					if(!val.getKey().equals(socket.getInetAddress()))
 		    						val.getValue().sendMessage(reci);
 		    				}
 		                	
 		                } else if(reci.getType().equals("raisehand")) {
-		                	mainframe.addSession("[" + socket.getInetAddress() + "] 举手");
-		                	mainframe.showRaiseHand("[" + socket.getInetAddress() + "] 举手");
+		                	mainframe.addSession("[" + socket.getInetAddress().getHostAddress() + "] 举手");
+		                	mainframe.showRaiseHand("[" + socket.getInetAddress().getHostAddress() + "] 举手");
 		                } else if(reci.getType().equals("tasklist")) {
 		                	taskViewFrame.getFrame().view(reci);
 		                	System.out.println(reci);
@@ -177,8 +236,9 @@ public class ServerSocketHandler implements SocketStatusListener {
 					return;// 终止线程继续运行,这里也可以使用continue
 				} finally {
 					//System.out.println(socket.getInetAddress()+":"+socket.getPort()+"已下线");
-					mainframe.addSession("[" + socket.getInetAddress() + "] 已下线");
-					ServerThread.removeUserList(socket.getInetAddress());
+					ServerShot.get(socket.getInetAddress().getHostAddress()).setVisible(false);
+					mainframe.addSession("[" + socket.getInetAddress().getHostAddress() + "] 已下线");
+					ServerThread.removeUserList(socket.getInetAddress().getHostAddress());
 					mainframe.setOnlineMember("当前在线人数为：" + ServerThread.getUserList());
 					 
 				}
