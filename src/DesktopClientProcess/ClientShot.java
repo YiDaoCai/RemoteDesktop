@@ -6,6 +6,8 @@ import java.io.*;
 import java.net.*;  
 import java.util.zip.*;
 
+import util.DesktopRemoteType;
+
 import com.sun.image.codec.jpeg.JPEGCodec;
   
 public class ClientShot extends Thread {  
@@ -31,7 +33,7 @@ public class ClientShot extends Thread {
         while (true) {  
             try {  
             	//System.out.println(i++);
-                socket = new Socket(Client.getServerAddress(), 5001);// 连接远程IP  
+                socket = new Socket(Client.getServerAddress(), DesktopRemoteType.ServerShot.getPort());// 连接远程IP  
                 BufferedImage image = robot.createScreenCapture(rectangle);// 捕获制定屏幕矩形区域  
                 os = new ZipOutputStream(socket.getOutputStream());// 加入压缩流  
                 // os = new ZipOutputStream(new FileOutputStream("C:/1.zip"));  

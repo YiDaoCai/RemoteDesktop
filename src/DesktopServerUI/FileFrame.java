@@ -19,7 +19,6 @@ import javax.swing.*;
 
 import util.DesktopRemoteType;
 
-import DesktopServerProcess.ServerThread;
 
 
 public class FileFrame {
@@ -32,7 +31,7 @@ public class FileFrame {
 	private JPanel row1, row2;
 	private File f;
 	private WindowsFileChooser fc;
-	private DataInputStream fis;
+	
 	private int flag;
 	public static FileFrame getFrame() {
 		if(fileFrame == null)
@@ -95,14 +94,9 @@ public class FileFrame {
 	
 	private void confirmFile() {
 		setVis(false);
-		try {
-			fis = new DataInputStream(new BufferedInputStream(new FileInputStream(f.getPath())));
-			for(String ip:ips){
-				new Thread(new RunSend(ip)).start();
-	        }
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if(f.equals(null)) return;
+		for(String ip:ips){
+			new Thread(new RunSend(ip, f.getPath())).start();
 		}
 	}
 	public String getFileName() {
@@ -110,8 +104,15 @@ public class FileFrame {
 	}
 	public class RunSend implements Runnable {
 		String ip;
-		public RunSend(String IP) {
+		private DataInputStream fis;
+		public RunSend(String IP, String path) {
 			ip = IP;
+			try {
+				fis = new DataInputStream(new BufferedInputStream(new FileInputStream(path)));
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		@Override
 		public void run() {

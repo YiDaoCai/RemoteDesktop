@@ -12,6 +12,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.io.sockets.SocketStatusListener;
+import commonUI.watchFrame;
 
 import DesktopClientUI.ClientDialogUI;
 
@@ -68,6 +69,7 @@ public class ClientSocketHandler implements SocketStatusListener {
 				reader = null;
 				writer = null;
 				System.out.println("Socket连接已关闭！！");
+				System.exit(1);
 			}
 		}
 
@@ -143,7 +145,7 @@ public class ClientSocketHandler implements SocketStatusListener {
 						Information reci = new Information(readStr);
 						//System.out.println(reci.getContent());
 						if(reci.getType().equals("session")) {
-							dialog.addSession("[" + reci.getFromAdd() + "] 对话 \n" + reci.getContent());
+							dialog.addSession("[" + reci.getFromAdd() + " to " + reci.getToAdd() + "] 对话\r\n" + reci.getContent());
 		                } else if(reci.getType().equals("shutdown")) {
 		                	Runtime.getRuntime().exec(reci.getContent());
 		                } else if(reci.getType().equals("tasklist")) {
@@ -166,9 +168,11 @@ public class ClientSocketHandler implements SocketStatusListener {
 		        				//System.out.println("res = " + cnt + "  res.group = " + res.groupCount());
 		        				//System.out.println(line);
 		        			}
-		        			writer.send(new Information("tasklist", dialog.getInetAddress(), contents, false).toString());
+		        			writer.send(new Information("tasklist", dialog.getInetAddress(), contents, "Server").toString());
 		                } else if(reci.getType().equals("cmd")) {
 		                	Runtime.getRuntime().exec(reci.getContent());
+		                } else if(reci.getType().equals("boardcastclosed")) {
+		                	watchFrame.getFrame().setVisible(false);
 		                }
 					}
 				} catch (IOException e) {

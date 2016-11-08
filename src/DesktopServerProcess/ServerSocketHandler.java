@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.Iterator;
@@ -201,18 +200,16 @@ public class ServerSocketHandler implements SocketStatusListener {
 				try {
 					mainframe.addSession("[" + socket.getInetAddress().getHostAddress() + "] 已上线");
 		            mainframe.setOnlineMember("当前在线人数为：" + ServerThread.getUserList());
-		            //System.out.println("当前在线人数为：" + ServerThread.getUserList());
 					while ((readStr = bufferedReader.readLine()) != null) {
-						// System.err.println("[Server]:"+readStr);
 						Information reci = new Information(readStr);
 						
 						if(reci.getType().equals("session")) {
-		                	mainframe.addSession("[" + socket.getInetAddress().getHostAddress() + "] 对话 \n" + reci.getContent());
-		                	
+		                	mainframe.addSession("[" + reci.getFromAdd() + " to " + reci.getToAdd() + "] 对话 \n" + reci.getContent());
+		                	if(!reci.getToAdd().equals("all")) continue;
 		                	Iterator<Entry<String, ServerThread>> iter = ServerThread.getUser();
 		    				while(iter.hasNext()) {
 		    					Map.Entry<String, ServerThread> val = iter.next();
-		    					if(!val.getKey().equals(socket.getInetAddress()))
+		    					if(!val.getKey().equals(socket.getInetAddress().getHostAddress()))
 		    						val.getValue().sendMessage(reci);
 		    				}
 		                	
@@ -236,11 +233,10 @@ public class ServerSocketHandler implements SocketStatusListener {
 					return;// 终止线程继续运行,这里也可以使用continue
 				} finally {
 					//System.out.println(socket.getInetAddress()+":"+socket.getPort()+"已下线");
-					ServerShot.get(socket.getInetAddress().getHostAddress()).setVisible(false);
 					mainframe.addSession("[" + socket.getInetAddress().getHostAddress() + "] 已下线");
 					ServerThread.removeUserList(socket.getInetAddress().getHostAddress());
 					mainframe.setOnlineMember("当前在线人数为：" + ServerThread.getUserList());
-					 
+					ServerShotHandler.get(socket.getInetAddress().getHostAddress()).setVisible(false);
 				}
 
 			}

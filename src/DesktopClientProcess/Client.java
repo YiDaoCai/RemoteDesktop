@@ -1,7 +1,13 @@
 package DesktopClientProcess;
 
+import java.awt.Image;
 import java.io.*;
 import java.net.*;
+import java.util.zip.ZipInputStream;
+
+import javax.imageio.ImageIO;
+
+import commonUI.watchFrame;
 
 import util.DesktopRemoteType;
 import util.Information;
@@ -14,7 +20,7 @@ public class Client {
 	private int port;
 	private Socket socket;
 	private ServerSocket filesocket;
-
+	private ServerSocket shotsocket;
 	public Socket getSocket() {
 		return socket;
 	}
@@ -38,7 +44,9 @@ public class Client {
 		handler.listen(true);
 		new ClientShot().start();
 		filesocket = new ServerSocket(DesktopRemoteType.ClientFile.getPort());
+		shotsocket = new ServerSocket(DesktopRemoteType.ClientShot.getPort());
 		new FileReceive().start();
+		new Boardcast().start();
 		System.out.println("shot start...");
 	}
 
@@ -58,18 +66,6 @@ public class Client {
 				socket = new Socket(Client.ServerAddress, this.port);
 				socket.setKeepAlive(true);
 				socket.setTcpNoDelay(true);
-				// filesocket = new Socket(Client.ServerAddress,
-				// DesktopRemoteType.FileTranType.getPort());
-				// new Thread(new Runnable() {
-				//
-				// @Override
-				// public void run() {
-				// // TODO Auto-generated method stub
-				// while(true) {
-				// new FileReceive().start();
-				// }
-				// }
-				// }).start();
 				ok = true;
 			} catch (UnknownHostException e) {
 				ip = javax.swing.JOptionPane.showInputDialog(null,
@@ -115,7 +111,33 @@ public class Client {
 	public Information receive() {
 		return null;
 	}
-
+	
+	public class Boardcast extends Thread {
+		/**
+		 * @return 接收来自服务端的屏幕广播
+		 */
+		public void run() {
+			Socket client;
+			Image cimage;
+			while (true) {  
+                try {  
+                	client = shotsocket.accept();
+                	watchFrame.getFrame().setTitle("教师");
+                	watchFrame.getFrame().setVisible(true);
+                    ZipInputStream zis = new ZipInputStream(client.getInputStream());  
+                    zis.getNextEntry();  
+                    cimage = ImageIO.read(zis);// 把ZIP流转换为图片
+                    int width = watchFrame.getFrame().getWidth();
+                    int height = watchFrame.getFrame().getHeight();
+                    cimage = cimage.getScaledInstance(width, height, Image.SCALE_FAST);
+                    watchFrame.getFrame().paint(cimage);
+                } catch (Exception e) {  
+                    e.printStackTrace();  
+                }   
+            }  
+		}
+	}
+	
 	public class FileReceive extends Thread {
 		/**
 		 * @return 接收来自服务端的文件
@@ -167,7 +189,7 @@ public class Client {
 					fileOut.close();
 					inputStream.close();
 					getMessageStream.close();
-
+					
 				} catch (FileNotFoundException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
