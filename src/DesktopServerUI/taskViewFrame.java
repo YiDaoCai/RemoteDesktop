@@ -45,7 +45,7 @@ public class taskViewFrame {
 	}
 	
 	public void view(Information task) {
-		main.setTitle("进程监控 : " + task.getFromAdd());
+		main.setTitle("进程监控 : " + ip);
 		list.removeAll();
 		list.add(new ProcessView());
 		String content = task.getContent();
@@ -93,19 +93,35 @@ public class taskViewFrame {
 			super(new GridLayout(1, 3));
 			name = new JLabel("进程名称");
 			memory = new JLabel("内存占用");
-			JLabel over = new JLabel("结束进程");
+			JButton refresh = new JButton("刷新");
+			refresh.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					// TODO Auto-generated method stub
+					ServerThread.getServerThread(ip).sendMessage(new Information("tasklist", "Server", "tasklist", ip));
+				}
+			});
+			//JLabel over = new JLabel("结束进程");
 			//over.addActionListener(new Action());
 			
 			add(name);
 			add(memory);
-			add(over);
+			add(refresh);
 		}
 		public class Action implements ActionListener {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				ServerThread.getServerThread(ip).sendMessage(new Information("cmd", Server.getName(), "taskkill /F /IM " + name.getText() + " /T", false));
+				ServerThread.getServerThread(ip).sendMessage(new Information("cmd", Server.getName(), "taskkill /F /IM " + name.getText() + " /T", ip));
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				ServerThread.getServerThread(ip).sendMessage(new Information("tasklist", "Server", "tasklist", ip));
 			}
 			
 		}

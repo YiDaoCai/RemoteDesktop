@@ -21,6 +21,7 @@ public class DesktopRemoteType {
 	
 	public static final DesktopRemoteType ServerFile = new DesktopRemoteType("ServerFile", 1234);
 	public static final DesktopRemoteType OtherType = new DesktopRemoteType("Other", 5678);
-	public static final DesktopRemoteType ImageType = new DesktopRemoteType("Image", 3456);
+	public static final DesktopRemoteType ServerShot = new DesktopRemoteType("ServerShot", 3456);
+	public static final DesktopRemoteType ClientShot = new DesktopRemoteType("ClientShot", 6543);
 	public static final DesktopRemoteType ClientFile = new DesktopRemoteType("ClientFile", 6789);
 }

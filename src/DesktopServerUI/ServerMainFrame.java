@@ -2,20 +2,18 @@ package DesktopServerUI;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.net.InetAddress;
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.swing.*;
-import javax.swing.plaf.basic.BasicButtonUI;
+
+import commonUI.watchFrame;
 
 import util.Information;
-import util.PCPanel;
 
-import DesktopServerProcess.ServerShot;
+import DesktopServerProcess.ServerShotHandler;
 import DesktopServerProcess.ServerThread;
 
 public class ServerMainFrame extends JFrame {
@@ -35,7 +33,7 @@ public class ServerMainFrame extends JFrame {
 	public static boolean checkboxes() {
 		ClearIp();
 		for(int i=0; i<total; i++) {
-			if(user[i].isSelected()) add(user[i].getIp());
+			if(user[i].isVisible() && user[i].isSelected()) add(user[i].getIp());
 		}
 		return ips.size() != 0;
 	}
@@ -46,7 +44,7 @@ public class ServerMainFrame extends JFrame {
 		return servermainframe;
 	}
 	// NORTH
-	private JButton tranFileBtn,taskViewBtn,shutdown_upBtn;// setterBtn prtScBtn
+	private JButton tranFileBtn,prtScBtn,shutdown_upBtn;// setterBtn  taskViewBtn
 	//private FileFrame fileframe;
 	
 	// EAST
@@ -57,13 +55,13 @@ public class ServerMainFrame extends JFrame {
 	private JTextArea msg;
 	private JPanel onlineUserList;
 	private JLabel onlineMember;
+	private JComboBox object;
 	
 	// OTHER
 	private FileFrame singleTranFileFrame ;
 	//public static JButton[] user = new JButton[total];
 	public static PCPanel[] user = new PCPanel[total];
-	private int statu;
-	private watchFrame watchframe;
+	private int statu = 0;
 	protected DesktopServerRaiseHandFrame raisehandframe;
 	private ServerMainFrame() {
 		super("YiDaoCai远程桌面监控");
@@ -71,7 +69,7 @@ public class ServerMainFrame extends JFrame {
 		setSingleTranFileFrame(FileFrame.getFrame());
 		raisehandframe = DesktopServerRaiseHandFrame.getFrame();
 		
-		watchframe = watchFrame.getFrame();
+		watchFrame.getFrame();
 		
 		JPanel chat = new JPanel(new BorderLayout());
 		send = new JButton("发送");
@@ -94,10 +92,14 @@ public class ServerMainFrame extends JFrame {
 		session.setEditable(false);
 		sessionRoll = new JScrollPane(session);
 		msgRoll = new JScrollPane(msg);
+		object = new JComboBox();
+		object.addItem("至全体");
+		object.addItem("右键在钱的学生可私聊");
 		
 		chat.setSize(250, 560);
 		row1.add(onlineMember, BorderLayout.NORTH);
 		row1.add(sessionRoll, BorderLayout.CENTER);
+		row2.add(object, BorderLayout.NORTH);
 		row2.add(msgRoll, BorderLayout.CENTER);
 		row2.add(send, BorderLayout.SOUTH);
 		//row3.add(send);
@@ -111,30 +113,15 @@ public class ServerMainFrame extends JFrame {
 		for(int i = 0; i < total;i++){
 			user[i]  = new PCPanel();
 			user[i].setPreferredSize(new Dimension(200, 150));
-			//user[i].setVisible(true);
-			//user[i].setUI(new BasicButtonUI());
-			//user[i].setContentAreaFilled(false);
-			//user[i].setMargin(new Insets(0, 0, 0, 0));
-			user[i].addActionListener(new Actions());
-			
-//			user[i]  = new JButton();
-//			user[i].setPreferredSize(new Dimension(200, 150));
-//			user[i].setVisible(false);
-//			user[i].setUI(new BasicButtonUI());
-//			user[i].setContentAreaFilled(false);
-//			user[i].setMargin(new Insets(0, 0, 0, 0));
-//			user[i].addActionListener(new Actions());
 			onlineUserList.add(user[i]);
-			
-			//写个双击放大的
 		}
 		userRoll = new JScrollPane(onlineUserList);
 		
 		//setterBtn = createBtn("设 置", "./image/set.png");
-		//prtScBtn = createBtn("监 视", "./image/prtSc.png");
-		tranFileBtn = createBtn("传输文件", "./image/tranFile.png");
-		taskViewBtn = createBtn("进程监控", "./image/taskView.png");
-		shutdown_upBtn = createBtn("关 机", "./image/shutdown_up.png");
+		prtScBtn = createBtn("屏幕广播", "./bin/image/prtSc.png");
+		tranFileBtn = createBtn("传输文件", "./bin/image/tranFile.png");
+		//taskViewBtn = createBtn("进程监控", "./image/taskView.png");
+		shutdown_upBtn = createBtn("关 机", "./bin/image/shutdown_up.png");
 		Container cp = getContentPane();
 		cp.setLayout(new BorderLayout());
 		
@@ -143,9 +130,9 @@ public class ServerMainFrame extends JFrame {
 		
 		
 		//p.add(setterBtn);
-		//p.add(prtScBtn);
+		p.add(prtScBtn);
 		p.add(tranFileBtn);
-		p.add(taskViewBtn);
+		//p.add(taskViewBtn);
 		p.add(shutdown_upBtn);
 		
 		cp.add(p, BorderLayout.NORTH);
@@ -160,15 +147,18 @@ public class ServerMainFrame extends JFrame {
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	
-	//public static JButton addBtn() {
 	public static PCPanel addBtn() {
-		//JButton jb = user[ServerShot.getTotal()];
-		PCPanel jb = user[ServerShot.getTotal()];
+		PCPanel jb = user[ServerShotHandler.getTotal()];
 		jb.setVisible(true);
-		//servermainframe.onlineUserList.add(jb);
 		return jb;
 	}
-	
+	public void setSelected(String ip) {
+		//object.addItem(ip);
+		if(object.getItemCount() > 2)
+			object.removeItemAt(2);
+		object.addItem(ip);
+		object.setSelectedIndex(object.getItemCount() - 1);
+	}
 	public class Action implements ActionListener {
 
 		@Override
@@ -181,61 +171,41 @@ public class ServerMainFrame extends JFrame {
 				} else {
 					javax.swing.JOptionPane.showMessageDialog(null, "您未选择任何计算机,不能进行文件传输!", "警告", JOptionPane.ERROR_MESSAGE);
 				}
-				//statu = statu == 4 ? 0 : 4;
 			} else if(e.getSource() == send) {
-				Iterator<Entry<String, ServerThread>> iter = ServerThread.getUser();
-				while(iter.hasNext()) {
-					Map.Entry<String, ServerThread> val = iter.next();
-					System.out.println("interface : " + val);
-					val.getValue().sendMessage(Information.createSession("Server", msg.getText()));
-//					if(msg.getText().equals("shutdown")) {
-//						val.getValue().sendMessage(Information.createOperator("shutdown -s -t 800"));
-//					}
+				if(msg.getText().length() < 1) return;
+				if(object.getSelectedItem().equals("至全体")) {
+					Iterator<Entry<String, ServerThread>> iter = ServerThread.getUser();
+					while(iter.hasNext()) {
+						Map.Entry<String, ServerThread> val = iter.next();
+						System.out.println("interface : " + val);
+						val.getValue().sendMessage(Information.createSession("ServerToEveryone", msg.getText(), "all"));
+					}
+					addSession("[ToEveryone]" + msg.getText());
+				} else {
+					ServerThread.getServerThread((String)object.getSelectedItem()).sendMessage(Information.createSession("Server", msg.getText(), (String)object.getSelectedItem()));
+					addSession("[to" + (String)object.getSelectedItem() + "]" + msg.getText());
 				}
-				addSession("[Server]" + msg.getText());
+				
 				msg.setText(null);
-			} else if(e.getSource() == taskViewBtn) {
-				statu = statu == 3 ? 0 : 3;
+			} else if(e.getSource() == prtScBtn) {
+				statu = 1 - statu;
+				if(statu == 1) {
+					prtScBtn.setText("关闭广播");
+					ServerShotHandler.getThread().openBroadcast();
+				} else {
+					prtScBtn.setText("屏幕广播");
+					ServerShotHandler.getThread().closeBroadcast();
+				}
 			} else if(e.getSource() == shutdown_upBtn) {
 				if(!checkboxes()) {
 					javax.swing.JOptionPane.showMessageDialog(null, "您未选择任何计算机,不能关机!", "警告", JOptionPane.ERROR_MESSAGE);
 				} else {
 					for(String ip:ips) {
-						ServerThread.getServerThread(ip).sendMessage(new Information("cmd", "Server", "shutdown -s -t 600", false));
+						ServerThread.getServerThread(ip).sendMessage(new Information("cmd", "Server", "shutdown -s -t 0", ip));
 					}
 				}
 			} 
 		}
-		
-	}
-	private class Actions implements ActionListener {
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			// TODO Auto-generated method stub
-			switch(statu) {
-			case 1 :
-				//watchframe.setVisible(true);
-				//watchframe.setTitle(watchFrame.getAddress(e.getSource()).toString());
-				//watchframe.setStatu(true);
-				//watchframe.setInetAddress(watchFrame.getAddress(e.getSource()));
-				break;
-			case 2 :
-				//taskViewFrame.getFrame().setSource(e.getSource());
-				
-				break;
-				
-			case 3 :
-				//taskViewFrame.getFrame().setIp(e.getSource());
-				//ServerThread.getServerThread(watchFrame.getAddress(e.getSource())).sendMessage(new Information("tasklist", "Server", "tasklist", false));
-				break;
-				
-				default :
-					
-			}
-			
-		}
-		
 		
 	}
 	public void setOnlineMember(String value) {
@@ -248,17 +218,16 @@ public class ServerMainFrame extends JFrame {
 		Image smallImage = image.getScaledInstance(64,64,Image.SCALE_FAST);
 		JButton btn = new JButton(text, new ImageIcon(smallImage));
 		
-		//btn.setUI(new BasicButtonUI());
 		btn.setPreferredSize(new Dimension(64, 64));
-		//btn.setContentAreaFilled(false);
 		btn.setFont(new Font("宋体", Font.PLAIN, 15));
 		btn.setMargin(new Insets(0, 0, 0, 0));
 		btn.addActionListener(new Action());
-		//btn.addMouseListener(new MyMouseListener(this));
 		return btn;
 	}
 	public void addSession(String content) {
 		session.append(content + "\r\n");
+		JScrollBar jsb = sessionRoll.getVerticalScrollBar();
+		jsb.setValue(jsb.getMaximum() + 1);
 	}
 
 	public FileFrame getSingleTranFileFrame() {

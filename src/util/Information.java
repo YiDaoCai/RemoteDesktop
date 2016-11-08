@@ -7,9 +7,9 @@ import org.json.*;
 public class Information {
 	private String type;
 	private String fromAdd;
+	private String toAdd;
 	private String content;
 	private long date;
-	private boolean isPub;
 	
 	public String getType() {
 		return type;
@@ -22,9 +22,6 @@ public class Information {
 	}
 	public long getDate() {
 		return date;
-	}
-	public boolean isPub() {
-		return isPub;
 	}
 	public Information(String json) {
 		try {
@@ -39,7 +36,7 @@ public class Information {
 			type = result.get("type").toString();
 			fromAdd = result.get("fromAdd").toString();
 			date = (Long) result.get("date");
-			isPub = (Boolean) result.get("isPub");
+			toAdd = result.get("toAdd").toString();
 			//content = new String("hello");
 			if(!type.equals("raisehand")) {
 				content = result.get("content").toString();
@@ -50,39 +47,41 @@ public class Information {
 		}
 		
 	}
-	public Information(String type, String fromAdd, String content, boolean isPub) {
+	public Information(String type, String fromAdd, String content, String toAdd) {
 		this.type = type;
 		this.fromAdd = fromAdd;
 		this.content = content;
 		this.date = (new Date()).getTime();
-		this.isPub = isPub;
+		this.toAdd = toAdd;
 	}
 	public static Information createRaiseHand(String fromAdd) {
-		return new Information("raisehand", fromAdd, null, true);
+		return new Information("raisehand", fromAdd, null, "Server");
 	}
 	public static Information createOperator(String type, String cmd) {
-		return new Information(type, "Server", cmd, true);
+		return new Information(type, "Server", cmd, "Server");
 	}
-	public static Information createSession(String fromAdd, String content) {
-		return new Information("session", fromAdd, content, true);
+	public static Information createSession(String fromAdd, String content, String to) {
+		return new Information("session", fromAdd, content, to);
 	}
 	public String toString() {
 		JSONObject json = new JSONObject();
 		try {
 			json.put("type", type);
 			json.put("fromAdd", fromAdd);
+			json.put("toAdd", toAdd);
 			json.put("content", content);
 			json.put("date", date);
-			json.put("isPub", isPub);
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return json.toString();
 	}
-//	public static void main(String[] args) throws UnknownHostException {
-//		System.out.println(createRaiseHand(InetAddress.getLocalHost().toString()));
-//		System.out.println(createSession(InetAddress.getLocalHost().toString(), "��Ҫ������"));
-//	}
+	public String getToAdd() {
+		return toAdd;
+	}
+	public void setToAdd(String toAdd) {
+		this.toAdd = toAdd;
+	}
 }
 
