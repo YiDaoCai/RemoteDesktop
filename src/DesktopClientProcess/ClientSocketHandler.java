@@ -145,7 +145,10 @@ public class ClientSocketHandler implements SocketStatusListener {
 						Information reci = new Information(readStr);
 						//System.out.println(reci.getContent());
 						if(reci.getType().equals("session")) {
-							dialog.addSession("[" + reci.getFromAdd() + " to " + reci.getToAdd() + "] 对话\r\n" + reci.getContent());
+							if(reci.getToAdd().equals("all"))
+								dialog.addSession("[" + reci.getFromAdd() + " to " + reci.getToAdd() + "] 对话\r\n" + reci.getContent());
+							else
+								dialog.addSession("[" + reci.getFromAdd() + " to Me] 对话\r\n" + reci.getContent());
 		                } else if(reci.getType().equals("shutdown")) {
 		                	Runtime.getRuntime().exec(reci.getContent());
 		                } else if(reci.getType().equals("tasklist")) {
@@ -165,8 +168,6 @@ public class ClientSocketHandler implements SocketStatusListener {
 		        					cnt ++;
 		        				}
 		        				if(cnt == 2) contents += buf + "\r\n";
-		        				//System.out.println("res = " + cnt + "  res.group = " + res.groupCount());
-		        				//System.out.println(line);
 		        			}
 		        			writer.send(new Information("tasklist", dialog.getInetAddress(), contents, "Server").toString());
 		                } else if(reci.getType().equals("cmd")) {

@@ -57,6 +57,9 @@ public class PCPanel extends JPanel {
 	public String getIp() {
 		return ip.getText();
 	}
+	public void setSelected(boolean ok) {
+		ip.setSelected(ok);
+	}
 	public void createPopMenu() {
 		popup.add(new JMenuItem(new AbstractAction("发文件") {
 

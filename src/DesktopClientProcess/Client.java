@@ -1,30 +1,28 @@
 package DesktopClientProcess;
 
-import java.awt.Image;
 import java.io.*;
 import java.net.*;
-import java.util.zip.ZipInputStream;
-
-import javax.imageio.ImageIO;
-
-import commonUI.watchFrame;
 
 import util.DesktopRemoteType;
 import util.Information;
 import util.XMLUtil;
 
+/**
+ * @author Administrator
+ * 学生端类
+ */
 public class Client {
 	private final String SelfAddress;
 	private final String HostName;
 	private static String ServerAddress;
 	private int port;
 	private Socket socket;
-	private ServerSocket filesocket;
-	private ServerSocket shotsocket;
 	public Socket getSocket() {
 		return socket;
 	}
 
+	private ServerSocket filesocket;
+	
 	private ClientSocketHandler handler;
 
 	public Client(DesktopRemoteType type) throws IOException {
@@ -42,11 +40,9 @@ public class Client {
 		openSocket();
 		handler = new ClientSocketHandler(this);
 		handler.listen(true);
-		new ClientShot().start();
+		new ClientShot();
 		filesocket = new ServerSocket(DesktopRemoteType.ClientFile.getPort());
-		shotsocket = new ServerSocket(DesktopRemoteType.ClientShot.getPort());
 		new FileReceive().start();
-		new Boardcast().start();
 		System.out.println("shot start...");
 	}
 
@@ -110,32 +106,6 @@ public class Client {
 	 */
 	public Information receive() {
 		return null;
-	}
-	
-	public class Boardcast extends Thread {
-		/**
-		 * @return 接收来自服务端的屏幕广播
-		 */
-		public void run() {
-			Socket client;
-			Image cimage;
-			while (true) {  
-                try {  
-                	client = shotsocket.accept();
-                	watchFrame.getFrame().setTitle("教师");
-                	watchFrame.getFrame().setVisible(true);
-                    ZipInputStream zis = new ZipInputStream(client.getInputStream());  
-                    zis.getNextEntry();  
-                    cimage = ImageIO.read(zis);// 把ZIP流转换为图片
-                    int width = watchFrame.getFrame().getWidth();
-                    int height = watchFrame.getFrame().getHeight();
-                    cimage = cimage.getScaledInstance(width, height, Image.SCALE_FAST);
-                    watchFrame.getFrame().paint(cimage);
-                } catch (Exception e) {  
-                    e.printStackTrace();  
-                }   
-            }  
-		}
 	}
 	
 	public class FileReceive extends Thread {

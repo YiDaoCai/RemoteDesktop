@@ -22,8 +22,7 @@ import util.Information;
 import DesktopServerUI.PCPanel;
 import DesktopServerUI.ServerMainFrame;
 
-public class ServerShotHandler extends Thread{  
-	//private static Map<InetAddress, JButton> UserList = new HashMap<InetAddress, JButton>();
+public class ServerShotHandler extends Thread{
 	private static Map<String, PCPanel> UserList = new HashMap<String, PCPanel>();
 	private Broadcast broadcast;
     private Thread last;

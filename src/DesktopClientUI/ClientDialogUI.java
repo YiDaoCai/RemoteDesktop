@@ -70,7 +70,7 @@ public class ClientDialogUI {
 		object.addItem("至全体");
 		object.addItem("至老师");
 		object.setPreferredSize(new Dimension(115, 20));
-		Image image = (new ImageIcon("./bin/image/tranFile.png")).getImage();
+		Image image = (new ImageIcon(this.getClass().getResource("/image/tranFile.png"))).getImage();
 		Image smallImage = image.getScaledInstance(20, 20, Image.SCALE_FAST);
 		sendfile = new JButton("交作业", new ImageIcon(smallImage));
 		sendfile.setPreferredSize(new Dimension(115, 20));
