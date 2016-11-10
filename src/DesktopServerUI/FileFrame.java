@@ -1,5 +1,5 @@
 package DesktopServerUI;
-
+//传文件的窗口(教师给学生)
 import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -17,7 +17,8 @@ import java.util.ArrayList;
 
 import javax.swing.*;
 
-import util.DesktopRemoteType;
+import CommonClass.DesktopRemoteType;
+
 
 
 

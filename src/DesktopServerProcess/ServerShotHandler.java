@@ -1,5 +1,5 @@
 package DesktopServerProcess;
-
+//教师端屏幕广播，监视学生端屏幕
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -16,9 +16,9 @@ import javax.swing.*;
 import com.sun.image.codec.jpeg.JPEGCodec;
 import commonUI.watchFrame;
 
-import util.DesktopRemoteType;
-import util.Information;
 
+import CommonClass.DesktopRemoteType;
+import CommonClass.Information;
 import DesktopServerUI.PCPanel;
 import DesktopServerUI.ServerMainFrame;
 

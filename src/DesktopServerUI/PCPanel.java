@@ -1,5 +1,5 @@
 package DesktopServerUI;
-
+//桌面监视的panel以及监听器
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -17,10 +17,10 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
-import util.Information;
 
 import commonUI.watchFrame;
 
+import CommonClass.Information;
 import DesktopServerProcess.ServerThread;
 
 @SuppressWarnings("serial")

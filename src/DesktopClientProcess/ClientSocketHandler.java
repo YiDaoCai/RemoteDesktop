@@ -1,6 +1,6 @@
 package DesktopClientProcess;
 
-
+//学生端处理教师端的事务
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -11,12 +11,12 @@ import java.net.SocketException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.io.sockets.SocketStatusListener;
 import commonUI.watchFrame;
 
+import CommonClass.Information;
+import CommonClass.SocketStatusListener;
 import DesktopClientUI.ClientDialogUI;
 
-import util.Information;
 
 /**
  * @author Administrator

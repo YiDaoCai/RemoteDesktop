@@ -1,5 +1,5 @@
 package DesktopServerProcess;
-
+//接收学生端举手，消息，在线人数改变，发文件给学生端
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
@@ -7,12 +7,12 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.io.sockets.SocketStatusListener;
 
+import CommonClass.Information;
+import CommonClass.SocketStatusListener;
 import DesktopServerUI.ServerMainFrame;
 import DesktopServerUI.taskViewFrame;
 
-import util.Information;
 
 /**
  * @author Administrator

@@ -1,5 +1,5 @@
 package commonUI;
-
+//教师/学生端远程监视(视频)的窗口
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;

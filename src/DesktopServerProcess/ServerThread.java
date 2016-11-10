@@ -1,5 +1,5 @@
 package DesktopServerProcess;
-
+//线程vo
 import java.io.*;
 import java.net.Socket;
 import java.util.HashMap;
@@ -7,8 +7,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import CommonClass.Information;
 
-import util.Information;
+
 
 public class ServerThread extends ServerSocketHandler {
     private static Map<String, ServerThread> UserList = new HashMap<String, ServerThread>();

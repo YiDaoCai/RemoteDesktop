@@ -1,5 +1,5 @@
 package DesktopClientProcess;
-
+//学生端发送图片流
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;  
@@ -8,7 +8,8 @@ import java.util.zip.*;
 
 import javax.imageio.ImageIO;
 
-import util.DesktopRemoteType;
+
+import CommonClass.DesktopRemoteType;
 
 import com.sun.image.codec.jpeg.JPEGCodec;
 import commonUI.watchFrame;

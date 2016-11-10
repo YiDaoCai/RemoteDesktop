@@ -1,11 +1,12 @@
 package DesktopClientProcess;
-
+//学生端的main函数，输入ip连接，以及接收文件
 import java.io.*;
 import java.net.*;
 
-import util.DesktopRemoteType;
-import util.Information;
-import util.XMLUtil;
+import CommonClass.DesktopRemoteType;
+import CommonClass.Information;
+import CommonClass.XMLUtil;
+
 
 /**
  * @author Administrator
@@ -26,7 +27,6 @@ public class Client {
 	private ClientSocketHandler handler;
 
 	public Client(DesktopRemoteType type) throws IOException {
-		// Client.ServerAddress = XMLUtil.getBean("server");
 		this.port = type.getPort();
 		InetAddress ia = null;
 		try {

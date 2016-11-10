@@ -1,5 +1,5 @@
 package DesktopServerUI;
-
+//进程监控界面
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -9,10 +9,10 @@ import java.util.Arrays;
 
 import javax.swing.*;
 
+import CommonClass.Information;
 import DesktopServerProcess.Server;
 import DesktopServerProcess.ServerThread;
 
-import util.Information;
 
 public class taskViewFrame {
 	

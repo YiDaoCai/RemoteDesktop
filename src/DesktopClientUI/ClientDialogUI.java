@@ -1,5 +1,5 @@
 package DesktopClientUI;
-
+//学生端界面布局，发文件
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,9 +14,9 @@ import java.net.Socket;
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicButtonUI;
 
-import util.DesktopRemoteType;
-import util.Information;
 
+import CommonClass.DesktopRemoteType;
+import CommonClass.Information;
 import DesktopClientProcess.Client;
 
 public class ClientDialogUI {

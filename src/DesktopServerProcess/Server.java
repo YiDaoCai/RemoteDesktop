@@ -1,13 +1,13 @@
 package DesktopServerProcess;
-
+//教师端接收文件，以及教师端程序main函数
 import java.io.*;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import CommonClass.DesktopRemoteType;
 import DesktopServerUI.ServerMainFrame;
 
-import util.DesktopRemoteType;
 
 public class Server {
 	private final String SelfAddress;

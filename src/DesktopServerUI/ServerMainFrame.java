@@ -1,4 +1,5 @@
 package DesktopServerUI;
+//教师端主界面
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,8 +16,8 @@ import javax.swing.*;
 
 import commonUI.watchFrame;
 
-import util.Information;
 
+import CommonClass.Information;
 import DesktopServerProcess.ServerShotHandler;
 import DesktopServerProcess.ServerThread;
 
