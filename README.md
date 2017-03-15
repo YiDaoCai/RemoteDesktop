@@ -10,4 +10,4 @@
 ![](https://github.com/YiDaoCai/RemoteDesktop/blob/76aac1ddceb676f697257511caaee5deb84fbd42/Demo/2.jpg)
 
 ### 学生机上线后教师端的界面
-![](https://github.com/YiDaoCai/RemoteDesktop/blob/76aac1ddceb676f697257511caaee5deb84fbd42/Demo/2.jpg)
+![](https://github.com/YiDaoCai/RemoteDesktop/blob/76aac1ddceb676f697257511caaee5deb84fbd42/Demo/3.jpg)
